@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:utmfit/screens/user/profile/profile_user.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/constants/colors.dart';
 
 
@@ -17,7 +18,27 @@ class _dashboardUserState extends State<dashboardUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: clrBase, // Set the entire background screen color 
+      backgroundColor: clrBase, // Set the entire background screen color
+      appBar: AppBar(
+        title: Text('UTM FIT'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const loginScreen()),
+              );
+            },
+            child: Text(
+              'Sign In',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 187, 0),
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
         buttonBackgroundColor: Color(0xFFECAA00),

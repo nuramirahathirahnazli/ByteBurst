@@ -70,6 +70,10 @@ flutter:
   - assets/images/profile_pic.jpg
   - assets/images/profile_pic2.jpg
   - assets/images/fp.png
+  - assets/images/squash.png
+  - assets/images/pingpong.png
+  - assets/images/badminton.png
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

@@ -1,10 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:utmfit/screens/user/profile/profile_user.dart';
-import 'package:utmfit/screens/user/homepage_user.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/constants/colors.dart';
 
-class dashboardUser extends StatefulWidget {
+
+class dashboardUser extends StatefulWidget{
   const dashboardUser({super.key});
 
   @override
@@ -18,6 +19,26 @@ class _dashboardUserState extends State<dashboardUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: clrBase, // Set the entire background screen color
+      appBar: AppBar(
+        title: Text('UTM FIT'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const loginScreen()),
+              );
+            },
+            child: Text(
+              'Sign In',
+              style: TextStyle(
+                color: Color.fromARGB(255, 255, 187, 0),
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.transparent,
         buttonBackgroundColor: Color(0xFFECAA00),
@@ -28,22 +49,19 @@ class _dashboardUserState extends State<dashboardUser> {
           Icon(Icons.sports_tennis_outlined, size: 26, color: Colors.white),
           Icon(Icons.add, size: 26, color: Colors.white),
           Icon(Icons.history, size: 26, color: Colors.white),
-          Icon(Icons.person, size: 26, color: Colors.white),
+          Icon(
+            Icons.person, 
+            size: 26, 
+            color: Colors.white),
         ],
         onTap: (index) {
           setState(() {
             _page = index;
           });
-          if (index == 4) {
-            // Assuming index 4 corresponds to the "person" icon
+           if (index == 4) { // Assuming index 4 corresponds to the "person" icon
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProfileUser()),
-            );
-          } else if (index == 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HomepageUser()),
             );
           }
         },

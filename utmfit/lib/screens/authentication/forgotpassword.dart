@@ -107,7 +107,7 @@ class _ForgotPassWidgetState extends State<ForgotPassWidget> {
                             child: Text(
                               'Please Enter Your Email Address To Receive Verification Code', // Instruction text
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyText2,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ),
                           Padding(

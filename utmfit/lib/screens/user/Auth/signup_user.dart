@@ -30,6 +30,7 @@ class signupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     String email = '';
     String password = '';
+    String confirmPassword = '';
 
     return Scaffold(
       appBar: AppBar(
@@ -108,10 +109,33 @@ class signupScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    TextField(
+                      onChanged: (value) {
+                        confirmPassword = value;
+                      },
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        suffixIcon: const Icon(
+                          Icons.visibility_off,
+                          color: Colors.grey,
+                        ),
+                        labelText: 'Confirm Password',
+                        labelStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 117, 117, 115),
+                        ),
+                      ),
+                    ),
                     SizedBox(height: 20),
                     GestureDetector(
                       onTap: () {
-                        signUp(context, email, password);
+                        if (password == confirmPassword) {
+                          signUp(context, email, password);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Passwords do not match.'),
+                          ));
+                        }
                       },
                       child: Container(
                         height: 55,

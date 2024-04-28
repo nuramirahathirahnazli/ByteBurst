@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/src/constants/image_strings.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 
 class ProfileUser extends StatelessWidget{
   const ProfileUser({Key? key}) : super(key: key);
@@ -65,7 +66,12 @@ class ProfileUser extends StatelessWidget{
                 textColor: Colors.red,
                 endIcon: false,
                 backgroundColor: clrUser3, // Set the desired background color
-                onPress: () {},
+                onPress: () {
+                  Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const loginScreen()),
+              );
+                },
               ),
             ],
           ),

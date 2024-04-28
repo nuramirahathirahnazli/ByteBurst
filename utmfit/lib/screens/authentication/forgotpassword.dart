@@ -1,6 +1,7 @@
 // Importing necessary packages
 import 'package:flutter/material.dart'; // Flutter material library for UI components
 import 'package:firebase_auth/firebase_auth.dart'; // Firebase authentication package
+import 'package:utmfit/src/constants/colors.dart';
 
 // Importing the ForgotPassModel class from another file and exporting it
 import '../../model/forgotpass.dart';
@@ -48,7 +49,7 @@ class _ForgotPassWidgetState extends State<ForgotPassWidget> {
       onTap: () => FocusScope.of(context).requestFocus(_unfocusNode), // Handling tap to unfocus
       child: Scaffold(
         key: scaffoldKey, // Setting the key for the scaffold
-        backgroundColor: Color.fromARGB(255, 247, 249, 238), // Setting background color
+        backgroundColor: clrBase, // Setting background color
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -72,7 +73,7 @@ class _ForgotPassWidgetState extends State<ForgotPassWidget> {
                     padding: EdgeInsetsDirectional.fromSTEB(20, 40, 20, 100),
                     child: Card(
                       clipBehavior: Clip.antiAliasWithSaveLayer,
-                      color: Color(0xAEFFFFFF),
+                      color: clrUser3,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -138,8 +139,7 @@ class _ForgotPassWidgetState extends State<ForgotPassWidget> {
                               ),
                               style: ButtonStyle(
                                 backgroundColor:
-                                    MaterialStateProperty.all(Color.fromARGB(
-                                        255, 198, 192, 80)),
+                                    MaterialStateProperty.all(clrUser4),
                                 padding: MaterialStateProperty.all(
                                     EdgeInsets.fromLTRB(0, 0, 0, 0)),
                                 minimumSize: MaterialStateProperty.all(

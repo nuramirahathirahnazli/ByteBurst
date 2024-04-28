@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/authentication/forgotpassword.dart';
 import 'package:utmfit/screens/user/Auth/signup_user.dart';
-
+import 'package:utmfit/screens/user/dashboard_user.dart';
 
 class loginScreen extends StatelessWidget {
   const loginScreen({Key? key}) : super(key: key);
@@ -87,34 +88,61 @@ class loginScreen extends StatelessWidget {
                         ),)
                     ),
                   ),
-                  const SizedBox(height: 20,),
-                  const Align(
-                    alignment: Alignment.centerRight,
-                    child: Text('Forgot Password?',style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                      color: Color(0xff281537),
-                    ),),
-                  ),
-                  const SizedBox(height: 70,),
-                  Container(
-                    height: 55,
-                    width: 300,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFECAA00),
-                          Color.fromARGB(255, 224, 207, 159),
-                        ]
+                  const SizedBox(
+                      height: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgotPassWidget()),
+                        );
+                      },
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                            color: Color(0xff281537),
+                          ),
+                        ),
                       ),
                     ),
-                    child: const Center(child: Text('LOGIN',style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.white
-                    ),),),
-                  ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => dashboardUser()), // Navigate to DashboardUser screen
+                        );
+                      },
+                      child: Container(
+                        height: 55,
+                        width: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          gradient: const LinearGradient(colors: [
+                            Color(0xFFECAA00),
+                            Color.fromARGB(255, 224, 207, 159),
+                          ]),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'LOGIN',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 150,),
                    GestureDetector(
                       onTap: () {

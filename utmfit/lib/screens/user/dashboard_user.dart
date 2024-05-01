@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:utmfit/screens/user/profile/profile_user.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/constants/colors.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class dashboardUser extends StatefulWidget {
   const dashboardUser({super.key});
@@ -10,6 +12,9 @@ class dashboardUser extends StatefulWidget {
   @override
   State<dashboardUser> createState() => _dashboardUserState();
 }
+
+final CollectionReference announcementsCollection =
+    FirebaseFirestore.instance.collection('announcements');
 
 class _dashboardUserState extends State<dashboardUser> {
   int _page = 0;
@@ -165,72 +170,64 @@ class _dashboardUserState extends State<dashboardUser> {
 
           // List of announcements
           Padding(
-            padding: const EdgeInsets.only(top: 4.0), // Add padding at the top
+            padding: const EdgeInsets.only(top: 4.0),
             child: Card(
               margin: EdgeInsets.all(8.0),
               elevation: 4.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Announcements:',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                  ),
-                  Divider(),
-                  ListView(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+              child: StreamBuilder<QuerySnapshot>(
+                stream: announcementsCollection.snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      ListTile(
-                        title: Text(
-                          'Important Announcement',
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Announcements:',
                           style: TextStyle(
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87),
-                        ),
-                        subtitle: Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut euismod dui sed nisi pretium, eget suscipit risus laoreet.',
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                        leading: Icon(
-                          Icons.notifications,
-                          color: Color(0xFF9F4F5D),
-                        ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Color(0xFF9F4F5D),
+                              color: Colors.black),
                         ),
                       ),
-                      ListTile(
-                        title: Text(
-                          'Reminder: Maintenance',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87),
-                        ),
-                        subtitle: Text(
-                          'Closed due to maintenance',
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                        leading: Icon(
-                          Icons.notifications,
-                          color: Color(0xFF9F4F5D),
-                        ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                          color: Color(0xFF9F4F5D),
-                        ),
+                      Divider(),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          var announcement = snapshot.data!.docs[index];
+                          return ListTile(
+                            title: Text(
+                              announcement['title'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87),
+                            ),
+                            subtitle: Text(
+                              announcement['description'],
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                            leading: Icon(
+                              Icons.notifications,
+                              color: Color(0xFF9F4F5D),
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Color(0xFF9F4F5D),
+                            ),
+                          );
+                        },
                       ),
-                      // Add more announcements as needed
                     ],
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),

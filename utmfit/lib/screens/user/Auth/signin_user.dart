@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:utmfit/screens/user/Auth/signup_user.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart';
+import 'package:utmfit/screens/authentication/forgotpassword.dart';
 
 class loginScreen extends StatelessWidget {
   // Firebase Authentication instance
@@ -126,19 +127,29 @@ class loginScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: 20,
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
-                          color: Color(0xff281537),
-                        ),
-                      ),
-                    ),
+  height: 20,
+),
+Align(
+  alignment: Alignment.centerRight,
+  child: GestureDetector(
+    onTap: () {
+      // Navigate to the Forgot Password screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ForgotPassWidget()),
+      );
+    },
+    child: Text(
+      'Forgot Password?',
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 17,
+        color: Color(0xff281537),
+      ),
+    ),
+  ),
+),
+
                     SizedBox(
                       height: 70,
                     ),

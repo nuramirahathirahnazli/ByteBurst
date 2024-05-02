@@ -1,9 +1,8 @@
 // ignore_for_file: unused_field
 
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:utmfit/screens/user/profile/profile_user.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
+import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -44,29 +43,12 @@ class _dashboardUserState extends State<dashboardUser> {
           ),
         ],
       ),
-      bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Colors.transparent,
-        buttonBackgroundColor: Color(0xFFECAA00),
-        color: Color(0xFFECAA00),
-        animationDuration: const Duration(milliseconds: 300),
-        items: const <Widget>[
-          Icon(Icons.home, size: 26, color: Colors.white),
-          Icon(Icons.sports_tennis_outlined, size: 26, color: Colors.white),
-          Icon(Icons.add, size: 26, color: Colors.white),
-          Icon(Icons.history, size: 26, color: Colors.white),
-          Icon(Icons.person, size: 26, color: Colors.white),
-        ],
-        onTap: (index) {
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _page,
+        onItemTapped: (index) {
           setState(() {
             _page = index;
           });
-          if (index == 4) {
-            // Assuming index 4 corresponds to the "person" icon
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfileUser()),
-            );
-          }
         },
       ),
       body: Column(

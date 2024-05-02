@@ -1,7 +1,11 @@
+// ignore_for_file: unused_import
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:utmfit/screens/user/booking/history_booking.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart'; //dashboard user purposes
 import 'package:flutter/material.dart';
 import 'package:utmfit/screens/user/profile/edit_profile.dart';
+import 'package:utmfit/screens/user/profile/profile_user.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -24,7 +28,9 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       //home: dashboardUser(), 
-      home: EditProfileUser(),
+      //home: EditProfileUser(),
+      //home: ProfileUser(),
+      home: MyHistoryBooking()
     );
   }
 }

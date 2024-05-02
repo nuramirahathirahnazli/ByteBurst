@@ -1,22 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart'; 
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/src/constants/image_strings.dart';
-
 import 'package:utmfit/screens/user/profile/edit_profile.dart';
 
-class ProfileUser extends StatelessWidget{
+class ProfileUser extends StatelessWidget {
   const ProfileUser({Key? key}) : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
+    int selectedIndex = 4; // Assuming profile is the 5th item (index 4)
     return Scaffold(
-      backgroundColor: clrBase, // Set the entire background screen color
+      backgroundColor: clrBase,
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context), // Navigate back to dashboard_user screen
-          icon: const Icon(Icons.arrow_back_ios_new_sharp),
+        backgroundColor: clrUserPrimary,
+        title: Text(
+          'My Profile',
+          style: TextStyle(
+            fontSize: 24, // Set the desired font size
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        title: Text("My Profile", style: Theme.of(context).textTheme.headlineMedium),
+        centerTitle: true, // Center the title
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: selectedIndex,
+        onItemTapped: (index) => {
+          // This callback is already defined in your custom navigation bar
+        },
       ),
       body: Stack(
         children: [
@@ -24,7 +35,7 @@ class ProfileUser extends StatelessWidget{
           Container(
             height: 280.0,
             decoration: BoxDecoration(
-              color: clrUserPrimary, // Set the curved background color
+              color: clrUserPrimary,
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(180.0),
                 bottomRight: Radius.circular(180.0),
@@ -37,14 +48,14 @@ class ProfileUser extends StatelessWidget{
               children: [
                 const SizedBox(height: 10),
                 Container(
-                  width: 200, // Set the desired size
+                  width: 200,
                   height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white, // Set the background color to white
+                    color: Colors.white,
                     border: Border.all(
-                      color: Colors.white, // Set the border color
-                      width: 5.0, // Set the border width
+                      color: Colors.white,
+                      width: 5.0,
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -56,58 +67,59 @@ class ProfileUser extends StatelessWidget{
                     ],
                   ),
                   child: ClipOval(
-                    child: Image(image: AssetImage(strProfileImage), 
+                    child: Image(
+                      image: AssetImage(strProfileImage),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-              const SizedBox(height: 7),
-              Text(
-                "Marsha Mahmud",
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                const SizedBox(height: 7),
+                Text(
+                  "Marsha Mahmud",
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              const SizedBox(height: 40),
-              UserProfileWidget(
-                title: "Edit Profile",
-                icon: Icons.edit,
-                onPress: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const EditProfileUser()),
-                  );
-                },
-                backgroundColor: clrUser3,
-              ),
-              const Divider(),
-              const SizedBox(height: 10),
-              UserProfileWidget(
-                title: "Password",
-                icon: Icons.lock,
-                onPress: () {},
-                backgroundColor: clrUser3,
-              ),
-              const SizedBox(height: 10),
-              UserProfileWidget(
-                title: "Settings",
-                icon: Icons.settings,
-                onPress: () {},
-                backgroundColor: clrUser3, // Set the desired background color
-              ),
-              const Divider(),
-              const SizedBox(height: 10),
-              UserProfileWidget(
-                title: "Sign Out",
-                icon: Icons.logout,
-                textColor: Colors.red,
-                endIcon: false,
-                backgroundColor: clrUser3, // Set the desired background color
-                onPress: () {},
-              ),
-           ],
+                const SizedBox(height: 15),
+                const SizedBox(height: 40),
+                UserProfileWidget(
+                  title: "Edit Profile",
+                  icon: Icons.edit,
+                  onPress: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const EditProfileUser()),
+                    );
+                  },
+                  backgroundColor: clrUser3,
+                ),
+                const Divider(),
+                const SizedBox(height: 10),
+                UserProfileWidget(
+                  title: "Password",
+                  icon: Icons.lock,
+                  onPress: () {},
+                  backgroundColor: clrUser3,
+                ),
+                const SizedBox(height: 10),
+                UserProfileWidget(
+                  title: "Settings",
+                  icon: Icons.settings,
+                  onPress: () {},
+                  backgroundColor: clrUser3,
+                ),
+                const Divider(),
+                const SizedBox(height: 10),
+                UserProfileWidget(
+                  title: "Sign Out",
+                  icon: Icons.logout,
+                  textColor: Colors.red,
+                  endIcon: false,
+                  backgroundColor: clrUser3,
+                  onPress: () {},
+                ),
+              ],
             ),
           ),
         ],
@@ -124,7 +136,7 @@ class UserProfileWidget extends StatelessWidget {
     required this.onPress,
     this.endIcon = true,
     this.textColor,
-    this.backgroundColor, // Add a new property for background color
+    this.backgroundColor,
   }) : super(key: key);
 
   final String title;
@@ -132,17 +144,16 @@ class UserProfileWidget extends StatelessWidget {
   final VoidCallback onPress;
   final bool endIcon;
   final Color? textColor;
-  final Color? backgroundColor; // New property for background color
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
-    
-        return Container(
+    return Container(
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(15.0), // Add border radius here
+        borderRadius: BorderRadius.circular(15.0),
       ),
-        child: ListTile(  // Nested within Container
+      child: ListTile(
         onTap: onPress,
         leading: Container(
           width: 30,
@@ -163,7 +174,7 @@ class UserProfileWidget extends StatelessWidget {
           ),
           child: const Icon(Icons.arrow_forward, size: 18.0, color: clrUser5),
         ) : null,
-   ),
+      ),
     );
   }
 }

@@ -41,6 +41,7 @@ dependencies:
   provider: ^6.1.2
   firebase_ui_auth: ^1.13.1
   curved_navigation_bar: ^1.0.3
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:

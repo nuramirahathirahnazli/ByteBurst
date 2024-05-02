@@ -1,9 +1,10 @@
+// ignore_for_file: unused_field
+
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:utmfit/screens/user/profile/profile_user.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/constants/colors.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class dashboardUser extends StatefulWidget {

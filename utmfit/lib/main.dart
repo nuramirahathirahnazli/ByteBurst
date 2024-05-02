@@ -2,8 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart'; //dashboard user purposes
 import 'package:flutter/material.dart';
 import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

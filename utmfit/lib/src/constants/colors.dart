@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-const Color clrBase = Color.fromRGBO(255, 239, 198, 0.64); //kena tengok balik, sebab warna dia gelap dkt emulator, tapi dkt web okay
+const Color clrBase = Color(0xFFFFFCF4); 
 const Color clrBlack = Color(0xFF000000);
 
 //COLOURS FOR USER

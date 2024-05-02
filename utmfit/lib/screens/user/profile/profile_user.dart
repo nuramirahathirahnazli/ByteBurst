@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/src/constants/image_strings.dart';
 
+import 'package:utmfit/screens/user/profile/edit_profile.dart';
+
 class ProfileUser extends StatelessWidget{
   const ProfileUser({Key? key}) : super(key: key);
 
@@ -72,7 +74,12 @@ class ProfileUser extends StatelessWidget{
               UserProfileWidget(
                 title: "Edit Profile",
                 icon: Icons.edit,
-                onPress: () {},
+                onPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const EditProfileUser()),
+                  );
+                },
                 backgroundColor: clrUser3,
               ),
               const Divider(),

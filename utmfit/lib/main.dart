@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart'; //dashboard user purposes
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/user/profile/edit_profile.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: dashboardUser(), //dashboard user purposes
+      //home: dashboardUser(), 
+      home: EditProfileUser(),
     );
   }
 }

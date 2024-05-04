@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart'; 
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/src/constants/image_strings.dart';
@@ -183,7 +184,13 @@ class UserProfileWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: ListTile(
-        onTap: onPress,
+        onTap: () {
+          if (title == 'Sign Out') {
+            _showSignOutDialog(context);
+          } else {
+            onPress();
+          }
+        },
         leading: Container(
           width: 30,
           height: 30,
@@ -204,6 +211,36 @@ class UserProfileWidget extends StatelessWidget {
           child: const Icon(Icons.arrow_forward, size: 18.0, color: clrUser5),
         ) : null,
       ),
+    );
+  }
+
+  void _showSignOutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Sign Out'),
+          content: const Text('Are you sure you want to sign out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const loginScreen()),
+              );
+              },
+              child: const Text('Sign Out'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -129,7 +129,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
                 Expanded(
                   child: Text(
                     courtName,
-                    style: TextStyle(fontSize: 35.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const SizedBox(width: 8.0), // Add space between the courtName text and buttons

@@ -77,6 +77,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
             courtName: booking['courtType'] + ' Court',
             status: status,
             icon: Icons.sports_tennis,
+            bookingId: booking['bookingID'], // Pass bookingID to _buildBookingItem
           );
         }
         return const SizedBox.shrink();
@@ -85,106 +86,145 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
   }
 
   Widget _buildBookingItem({
-  required DateTime date,
-  required String courtName,
-  required String status,
-  required IconData icon,
-}) {
-  Color statusColor = clrStatusConfirmed;
-  if (status == 'Completed') {
-    statusColor = clrStatusCompleted;
-  } else if (status == 'Cancelled') {
-    statusColor = clrStatusCancelled;
+    required DateTime date,
+    required String courtName,
+    required String status,
+    required IconData icon,
+    required String bookingId, // Add bookingId to identify the specific booking
+  }) {
+    Color statusColor = clrStatusConfirmed;
+    if (status == 'Completed') {
+      statusColor = clrStatusCompleted;
+    } else if (status == 'Cancelled') {
+      statusColor = clrStatusCancelled;
+    }
+
+    Color viewButtonColor = clrViewDetails;
+    Color cancelButtonColor = clrCancel;
+
+    String formattedDate = DateFormat.yMMMMd().format(date);
+    String dayOfWeek = DateFormat.E().format(date);
+
+    return Card(
+      margin: EdgeInsets.all(8.0),
+      elevation: 4.0,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon),
+                SizedBox(width: 8.0),
+                Text('$dayOfWeek, $formattedDate'),
+              ],
+            ),
+            SizedBox(height: 8.0),
+            Divider(), // Add a small divider line here
+            SizedBox(height: 4.0),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    courtName,
+                    style: TextStyle(fontSize: 35.0, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(width: 8.0), // Add space between the courtName text and buttons
+                if (status == 'Confirmed') ...[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            // Handle view details
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: viewButtonColor, // Set button color based on status
+                            minimumSize: Size(double.infinity, 28.0), // Set minimum height for the button
+                            padding: EdgeInsets.symmetric(vertical: 15.0), // Add padding to the button
+                          ),
+                          child: Text('View Details', style: TextStyle(fontSize: 16.0, color: Colors.white)),
+                        ),
+                        SizedBox(height: 20), // Add space between the buttons
+                        ElevatedButton(
+                          onPressed: () {
+                            _cancelBooking(context, bookingId); // Call function to cancel booking
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: cancelButtonColor, // Set button color based on status
+                            minimumSize: Size(double.infinity, 28.0), // Set minimum height for the button
+                            padding: EdgeInsets.symmetric(vertical: 15.0), // Add padding to the button
+                          ),
+                          child: Text('Cancel Booking', style: TextStyle(fontSize: 16.0, color: Colors.white)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                if (status != 'Confirmed') ...[
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Handle view details
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: viewButtonColor, // Set button color based on status
+                        minimumSize: Size(double.infinity, 28.0), // Set minimum height for the button
+                        padding: EdgeInsets.symmetric(vertical: 15.0), // Add padding to the button
+                      ),
+                      child: Text('View Details', style: TextStyle(fontSize: 16.0, color: Colors.white)),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            SizedBox(height: 8.0),
+            Text('Status: $status', style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
   }
 
-  Color viewButtonColor = clrViewDetails;
-  Color cancelButtonColor = clrCancel;
+  void _cancelBooking(BuildContext context, String bookingId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Cancellation'),
+          content: Text('Do you really want to cancel this booking?\nThis process cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                _confirmCancellation(bookingId); // Call function to cancel booking
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  String formattedDate = DateFormat.yMMMMd().format(date);
-  String dayOfWeek = DateFormat.E().format(date);
-
-  return Card(
-    margin: EdgeInsets.all(8.0),
-    elevation: 4.0,
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon),
-              SizedBox(width: 8.0),
-              Text('$dayOfWeek, $formattedDate'),
-            ],
-          ),
-          const Divider(),
-          SizedBox(height: 8.0),
-          SizedBox(height: 4.0),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  courtName,
-                  style: TextStyle(fontSize: 35.0, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(width: 8.0), // Add space between the courtName text and buttons
-              if (status == 'Confirmed') ...[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          // Handle view details
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: viewButtonColor, // Set button color based on status
-                          minimumSize: Size(double.infinity, 28.0), // Set minimum height for the button
-                          padding: EdgeInsets.symmetric(vertical: 15.0), // Add padding to the button
-                        ),
-                        child: Text('View Details', style: TextStyle(fontSize: 16.0, color: Colors.white)),
-                      ),
-                      SizedBox(height: 20), // Add space between the buttons
-                      ElevatedButton(
-                        onPressed: () {
-                          // Handle cancel booking
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: cancelButtonColor, // Set button color based on status
-                          minimumSize: Size(double.infinity, 28.0), // Set minimum height for the button
-                          padding: EdgeInsets.symmetric(vertical: 15.0), // Add padding to the button
-                        ),
-                        child: Text('Cancel Booking', style: TextStyle(fontSize: 16.0, color: Colors.white)),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              if (status != 'Confirmed') ...[
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle view details
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: viewButtonColor, // Set button color based on status
-                      minimumSize: Size(double.infinity, 28.0), // Set minimum height for the button
-                      padding: EdgeInsets.symmetric(vertical: 15.0), // Add padding to the button
-                    ),
-                    child: Text('View Details', style: TextStyle(fontSize: 16.0, color: Colors.white)),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          SizedBox(height: 8.0),
-          Text('Status: $status', style: TextStyle(color: statusColor, fontWeight: FontWeight.bold)),
-        ],
-      ),
-    ),
-  );
-}
-
+  void _confirmCancellation(String bookingId) {
+    FirebaseFirestore.instance.collection("booking").doc(bookingId).update({
+      'status': 'Cancelled', // Update status to "Cancelled"
+    }).then((value) {
+      // Handle success
+      print('Booking cancelled successfully');
+    }).catchError((error) {
+      // Handle error
+      print('Failed to cancel booking: $error');
+    });
+  }
 }

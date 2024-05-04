@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:utmfit/screens/user/booking/view_history_details.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 
@@ -139,7 +140,12 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            // Handle view details
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ViewHistoryDetails(bookingId: bookingId), // Pass bookingId to ViewHistoryDetails screen
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: viewButtonColor, // Set button color based on status
@@ -168,7 +174,12 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // Handle view details
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ViewHistoryDetails(bookingId: bookingId), // Pass bookingId to ViewHistoryDetails screen
+                          ),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: viewButtonColor, // Set button color based on status

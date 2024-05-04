@@ -1,12 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart'; 
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/src/constants/image_strings.dart';
 import 'package:utmfit/screens/user/profile/edit_profile.dart';
 
-class ProfileUser extends StatelessWidget {
-  const ProfileUser({Key? key}) : super(key: key);
+class ProfileUser extends StatefulWidget {
+  const ProfileUser ({super.key});
   
+  @override 
+  State<ProfileUser> createState() => _ProfileUserState();
+}
+
+class _ProfileUserState extends State<ProfileUser> {
+
+  //user
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
+
   @override
   Widget build(BuildContext context) {
     int selectedIndex = 4; // Assuming profile is the 5th item (index 4)
@@ -29,7 +41,14 @@ class ProfileUser extends StatelessWidget {
           // This callback is already defined in your custom navigation bar
         },
       ),
-      body: Stack(
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance.collection("Users").doc(currentUser.email).snapshots(),
+        builder: (context, snapshot) {
+          //get user
+          if (snapshot.hasData) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
+
+            return Stack(
         children: [
           // Curved background container
           Container(
@@ -75,11 +94,12 @@ class ProfileUser extends StatelessWidget {
                 ),
                 const SizedBox(height: 7),
                 Text(
-                  "Marsha Mahmud",
+                  userData['username'],
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
+                      
                 ),
                 const SizedBox(height: 15),
                 const SizedBox(height: 40),
@@ -118,11 +138,21 @@ class ProfileUser extends StatelessWidget {
                   endIcon: false,
                   backgroundColor: clrUser3,
                   onPress: () {},
+                  ),
+                    ],
+                  ),
                 ),
               ],
-            ),
-          ),
-        ],
+            );
+          }
+          else if (snapshot.hasError) {
+            return Center(child: Text('Error${snapshot.error}'),
+          );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }

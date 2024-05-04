@@ -28,9 +28,9 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       //home: dashboardUser(), 
-      //home: EditProfileUser(),
+      home: EditProfileUser(),
       //home: ProfileUser(),
-      home: MyHistoryBooking()
+      //home: MyHistoryBooking()
     );
   }
 }

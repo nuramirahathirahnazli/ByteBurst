@@ -18,7 +18,6 @@ class _ProfileUserState extends State<ProfileUser> {
   //user
   final currentUser = FirebaseAuth.instance.currentUser!;
 
-
   @override
   Widget build(BuildContext context) {
     int selectedIndex = 4; // Assuming profile is the 5th item (index 4)

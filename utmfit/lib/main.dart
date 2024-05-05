@@ -1,9 +1,14 @@
+// ignore_for_file: unused_import
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart'; //dashboard user purposes
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/user/dashboard_user.dart';
+import 'package:utmfit/screens/user/profile/edit_profile.dart';
+import 'package:utmfit/screens/user/profile/profile_user.dart';
+import 'package:utmfit/screens/user/booking/history_booking.dart';
 import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: dashboardUser(), //dashboard user purposes
+      home: loginScreen(), //dashboard user purposes
     );
   }
 }

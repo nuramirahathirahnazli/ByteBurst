@@ -26,6 +26,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
+        backgroundColor: clrBase,
         appBar: AppBar(
           backgroundColor: clrUserPrimary,
           title: const Text('My Bookings'),
@@ -78,7 +79,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
             courtName: booking['courtType'] + ' Court',
             status: status,
             icon: Icons.sports_tennis,
-            bookingId: booking['bookingID'], // Pass bookingID to _buildBookingItem
+            bookingID: booking['bookingID'], // Pass bookingID to _buildBookingItem
           );
         }
         return const SizedBox.shrink();
@@ -91,7 +92,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
     required String courtName,
     required String status,
     required IconData icon,
-    required String bookingId, // Add bookingId to identify the specific booking
+    required String bookingID, // Add bookingId to identify the specific booking
   }) {
     Color statusColor = clrStatusConfirmed;
     if (status == 'Completed') {
@@ -107,6 +108,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
     String dayOfWeek = DateFormat.E().format(date);
 
     return Card(
+      //color: clrUser3,//background color
       margin: EdgeInsets.all(8.0),
       elevation: 4.0,
       child: Padding(
@@ -114,6 +116,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            
             Row(
               children: [
                 Icon(icon),
@@ -143,7 +146,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ViewHistoryDetails(bookingId: bookingId), // Pass bookingId to ViewHistoryDetails screen
+                                builder: (context) => ViewHistoryDetails(bookingID: bookingID), // Pass bookingId to ViewHistoryDetails screen
                               ),
                             );
                           },
@@ -157,7 +160,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
                         SizedBox(height: 20), // Add space between the buttons
                         ElevatedButton(
                           onPressed: () {
-                            _cancelBooking(context, bookingId); // Call function to cancel booking
+                            _cancelBooking(context, bookingID); // Call function to cancel booking
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: cancelButtonColor, // Set button color based on status
@@ -177,7 +180,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ViewHistoryDetails(bookingId: bookingId), // Pass bookingId to ViewHistoryDetails screen
+                            builder: (context) => ViewHistoryDetails(bookingID: bookingID), // Pass bookingId to ViewHistoryDetails screen
                           ),
                         );
                       },

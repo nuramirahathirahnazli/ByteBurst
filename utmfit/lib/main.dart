@@ -27,8 +27,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: dashboardUser(), 
-      //home: ProfileUser()
+      //home: dashboardUser(), 
+      home: MyHistoryBooking()
     );
   }
 }

@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart';
+import 'package:utmfit/src/constants/colors.dart';
 
 class signupScreen extends StatelessWidget {
   const signupScreen({Key? key}) : super(key: key);
@@ -8,17 +10,38 @@ class signupScreen extends StatelessWidget {
   Future<void> signUp(
       BuildContext context, String email, String password) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+
+      //create the user
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      //after creating the user, create a new document in cloud firestore called USers
+      FirebaseFirestore.instance
+        .collection("Users")
+        .doc(userCredential.user!.email)
+        .set({
+          'username' : email.split('@')[0], //initial username
+          'email' : email,
+          'password' : password,
+          'contactNumber' : 'None', //default value
+          'matricNumber': 'None', //default value
+          'userType' : 'Student' //default value
+        });
+
+
       // Navigate to the next screen after successful signup
       // You can use Navigator.pushReplacement to prevent going back to the signup screen
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => dashboardUser()));
-    } on FirebaseAuthException catch (e) {
+    } 
+    
+    on FirebaseAuthException catch (e) {
+      
       // Handle signup errors here
       print('Signup error: ${e.message}');
+      
       // Show error dialog or snackbar
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Signup failed: ${e.message}'),
@@ -43,7 +66,7 @@ class signupScreen extends StatelessWidget {
             width: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(colors: [
-                Color(0xFFECAA00),
+                clrUserPrimary,
                 Color.fromARGB(255, 224, 207, 159),
               ]),
             ),
@@ -143,7 +166,7 @@ class signupScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
                           gradient: const LinearGradient(colors: [
-                            Color(0xFFECAA00),
+                            clrUserPrimary,
                             Color.fromARGB(255, 224, 207, 159),
                           ]),
                         ),

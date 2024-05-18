@@ -1,13 +1,13 @@
-// Importing necessary packages
-import 'package:flutter/material.dart'; // Flutter material library for UI components
-import 'package:firebase_auth/firebase_auth.dart'; // Firebase authentication package
-import 'package:utmfit/src/constants/colors.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-// Importing the ForgotPassModel class from another file and exporting it
+// Import the necessary colors or any other constants you have
+import '../../src/constants/colors.dart';
+
+// Import the ForgotPassModel class if needed
 import '../../model/forgotpass.dart';
 export '../../model/forgotpass.dart';
 
-// Defining a StatefulWidget for the ForgotPassWidget
 class ForgotPassWidget extends StatefulWidget {
   const ForgotPassWidget({Key? key}) : super(key: key);
 
@@ -15,64 +15,55 @@ class ForgotPassWidget extends StatefulWidget {
   _ForgotPassWidgetState createState() => _ForgotPassWidgetState();
 }
 
-// State class for the ForgotPassWidget
 class _ForgotPassWidgetState extends State<ForgotPassWidget> {
-  late TextEditingController controller; // Controller for handling text input
-  String email = ''; // String to store email address
-  late ForgotPassModel _model; // Instance of ForgotPassModel class
+  late TextEditingController controller;
+  String email = '';
+  late ForgotPassModel _model;
 
-  final scaffoldKey = GlobalKey<ScaffoldState>(); // Key for accessing the Scaffold state
-  final _unfocusNode = FocusNode(); // Focus node to handle focus events
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _unfocusNode = FocusNode();
 
-  // Initialization function called when the state is first created
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController(); // Initializing the controller
-    _model = ForgotPassModel(); // Initializing the ForgotPassModel instance
-    _model.initState(context); // Initializing the state of the model
+    controller = TextEditingController();
+    _model = ForgotPassModel();
+    _model.initState(context);
   }
 
-  // Function called when the state is about to be disposed
   @override
   void dispose() {
-    _model.dispose(); // Disposing the model
-    controller.dispose(); // Disposing the controller
-    _unfocusNode.dispose(); // Disposing the focus node
+    _model.dispose();
+    controller.dispose();
+    _unfocusNode.dispose();
     super.dispose();
   }
 
-  // Build function to construct the UI of the widget
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(_unfocusNode), // Handling tap to unfocus
+      onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
       child: Scaffold(
-        key: scaffoldKey, // Setting the key for the scaffold
-        backgroundColor: clrBase, // Setting background color
+        key: scaffoldKey,
+        backgroundColor: clrBase,
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.pop(context); // Navigating back to the previous screen
+              Navigator.pop(context);
             },
           ),
-          // Customize the AppBar as needed
-          // title: Text('Forgot Password'),
-          // backgroundColor: Colors.blue,
         ),
         body: SafeArea(
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 1,
-            decoration: BoxDecoration(),
             child: Stack(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(20, 40, 20, 100),
+                    padding: EdgeInsets.fromLTRB(20, 40, 20, 100),
                     child: Card(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
                       color: clrUser3,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -81,19 +72,17 @@ class _ForgotPassWidgetState extends State<ForgotPassWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                            padding: EdgeInsets.only(top: 20),
                             child: Image.asset(
-                              'assets/images/fp.png', // Image asset path
+                              'assets/images/fp.png',
                               width: 240,
                               height: 240,
                             ),
                           ),
                           Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
+                            padding: EdgeInsets.only(top: 10),
                             child: Text(
-                              'Forgot Password?', // Title text
+                              'Forgot Password?',
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                 fontFamily: 'Montserrat',
@@ -103,56 +92,32 @@ class _ForgotPassWidgetState extends State<ForgotPassWidget> {
                             ),
                           ),
                           Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                            padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                             child: Text(
-                              'Please Enter Your Email Address To Receive Verification Code', // Instruction text
+                              'Please Enter Your Email Address To Receive Verification Code',
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: TextStyle(
+                                // Adjust as needed
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                           Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 20, 0, 20),
+                            padding: EdgeInsets.only(top: 20, bottom: 20),
                             child: ElevatedButton(
                               onPressed: () async {
-                                final email = await openDialog(); // Opening a dialog to get email
-                                if (email == null || email.isEmpty) return; // If email is empty, return
+                                final email = await openDialog();
+                                if (email == null || email.isEmpty) return;
                                 await FirebaseAuth.instance
-                                    .sendPasswordResetEmail(email: email) // Sending reset password email
+                                    .sendPasswordResetEmail(email: email)
                                     .then((value) {
-                                  print("Reset Password Succesfully Sent"); // Printing success message
-                                  Navigator.of(context).pop(); // Closing the current screen
-                                }).onError((error, stackTrace) {
-                                  print("Error ${error.toString()}"); // Printing error message
+                                  print("Reset Password Successfully Sent");
+                                  Navigator.of(context).pop();
+                                }).catchError((error) {
+                                  print("Error: $error");
                                 });
-                                print('Button pressed ...'); // Printing button press
                               },
-                              child: Text(
-                                'Sent login code', // Button text
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(clrUser4),
-                                padding: MaterialStateProperty.all(
-                                    EdgeInsets.fromLTRB(0, 0, 0, 0)),
-                                minimumSize: MaterialStateProperty.all(
-                                    Size(180, 50)),
-                                shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                )),
-                                side: MaterialStateProperty.all(BorderSide(
-                                  color: Colors.transparent,
-                                  width: 1,
-                                )),
-                              ),
+                              child: Text('Send login code'),
                             ),
                           ),
                         ],
@@ -168,22 +133,21 @@ class _ForgotPassWidgetState extends State<ForgotPassWidget> {
     );
   }
 
-  // Function to open a dialog to get user email
   Future<String?> openDialog() => showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Enter Your Email'), // Dialog title
+          title: Text('Enter Your Email'),
           content: TextField(
             autofocus: true,
-            decoration: InputDecoration(hintText: 'Email'), // Text field for email input
+            decoration: InputDecoration(hintText: 'Email'),
             controller: controller,
           ),
           actions: [
             TextButton(
-              child: Text('OK'), // OK button
+              child: Text('OK'),
               onPressed: () {
-                Navigator.of(context).pop(controller.text); // Closing dialog and passing email text
-                controller.clear(); // Clearing the text field
+                Navigator.of(context).pop(controller.text);
+                controller.clear();
               },
             )
           ],

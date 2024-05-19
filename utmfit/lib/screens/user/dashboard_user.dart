@@ -5,6 +5,7 @@ import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:utmfit/screens/user/facilitiesDetails/courtDetails.dart';
 
 class dashboardUser extends StatefulWidget {
   const dashboardUser({super.key});
@@ -79,7 +80,10 @@ class _dashboardUserState extends State<dashboardUser> {
                     SizedBox(height: 16.0),
                     ElevatedButton.icon(
                       onPressed: () {
-                        // Add logic to navigate to the Squash facility page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SquashPage()),
+                        );
                       },
                       icon: Image.asset(
                         'assets/images/squash.png',
@@ -102,7 +106,11 @@ class _dashboardUserState extends State<dashboardUser> {
                     SizedBox(height: 16.0), // Add spacing between the buttons
                     ElevatedButton.icon(
                       onPressed: () {
-                        // Add logic to navigate to the Ping Pong facility page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PingPongPage()),
+                        );
                       },
                       icon: Image.asset(
                         'assets/images/pingpong.png',
@@ -125,7 +133,11 @@ class _dashboardUserState extends State<dashboardUser> {
                     SizedBox(height: 16.0), // Add spacing between the buttons
                     ElevatedButton.icon(
                       onPressed: () {
-                        // Add logic to navigate to the Badminton facility page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BadmintonPage()),
+                        );
                       },
                       icon: Image.asset(
                         'assets/images/badminton.png',

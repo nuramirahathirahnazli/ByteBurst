@@ -1,11 +1,11 @@
-// ignore_for_file: unused_field
-
 import 'package:flutter/material.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:utmfit/screens/user/announcement_detail.dart';
 import 'package:utmfit/screens/user/facilitiesDetails/courtDetails.dart';
+
 
 class dashboardUser extends StatefulWidget {
   const dashboardUser({super.key});
@@ -217,6 +217,17 @@ class _dashboardUserState extends State<dashboardUser> {
                               Icons.arrow_forward_ios,
                               color: Color(0xFF9F4F5D),
                             ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AnnouncementDetailPage(
+                                    title: announcement['title'],
+                                    description: announcement['description'],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),

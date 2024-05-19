@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/user/booking/bookingform.dart';
 import 'package:utmfit/screens/user/booking/history_booking.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart';
 import 'package:utmfit/screens/user/profile/profile_user.dart';
@@ -23,7 +24,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => dashboardUser()));
             break;
           case 1:
-            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SportsScreen()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BookingFormPage()));
             break;
           case 2:
             // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddScreen()));

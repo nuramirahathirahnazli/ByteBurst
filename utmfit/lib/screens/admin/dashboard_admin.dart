@@ -14,15 +14,13 @@ class DashboardAdmin extends StatefulWidget {
 class _DashboardAdminState extends State<DashboardAdmin> {
   int totalUsers = 0;
   int totalBooking = 0;
-  int totalFacilities = 0;
-  List<Map<String, dynamic>> facilities = [];
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     fetchTotals();
-    fetchFacilities();
+    // fetchFacilities();
   }
 
   void fetchTotals() async {
@@ -40,36 +38,11 @@ class _DashboardAdminState extends State<DashboardAdmin> {
       setState(() {
         totalBooking = bookingSnapshot.size;
       });
-
-      // Fetch total number of facilities
-      QuerySnapshot facilitiesSnapshot =
-          await FirebaseFirestore.instance.collection('facilities').get();
-      setState(() {
-        totalFacilities = facilitiesSnapshot.size;
-      });
     } catch (e) {
       print("Error fetching totals: $e");
     }
   }
 
-  void fetchFacilities() async {
-    try {
-      QuerySnapshot facilitiesSnapshot =
-          await FirebaseFirestore.instance.collection('facilities').get();
-      List<Map<String, dynamic>> fetchedFacilities = [];
-      facilitiesSnapshot.docs.forEach((doc) {
-        fetchedFacilities.add({
-          'number': doc.id,
-          'name': doc['name'],
-        });
-      });
-      setState(() {
-        facilities = fetchedFacilities;
-      });
-    } catch (e) {
-      print("Error fetching facilities: $e");
-    }
-  }
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -132,7 +105,7 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                       ),
                       _buildStatisticCard(
                         icon: Icons.sports_soccer,
-                        total: totalFacilities,
+                        total: 3,
                         label: 'Total Facilities',
                         labelColor: Colors.orange,
                       ),
@@ -160,20 +133,6 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: clrAdminPrimary,
-                                ),
-                              ),
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: clrAdminPrimary,
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: IconButton(
-                                  icon: Icon(Icons.add, color: Colors.white),
-                                  onPressed: () {
-                                    // Handle adding facilities
-                                  },
                                 ),
                               ),
                             ],
@@ -244,53 +203,85 @@ class _DashboardAdminState extends State<DashboardAdmin> {
     );
   }
 
-  Widget _buildFacilitiesTable() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Table(
-        border: TableBorder.all(color: Colors.black),
-        children: [
-          TableRow(
-            children: [
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Number', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
+ Widget _buildFacilitiesTable() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    child: Table(
+      border: TableBorder.all(color: Colors.black),
+      children: [
+        TableRow(
+          children: [
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Number', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Name Facilities', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
-            ],
-          ),
-          for (int i = 0; i < facilities.length; i++)
-            TableRow(
-              children: [
-                TableCell(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('${i + 1}'),
-                  ),
-                ),
-                TableCell(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('${facilities[i]['name']}'),
-                  ),
-                ),
-              ],
             ),
-        ],
-      ),
-    );
-  }
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Name Facilities', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('1'),
+              ),
+            ),
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Squash'),
+              ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('2'),
+              ),
+            ),
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Badminton'),
+              ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('3'),
+              ),
+            ),
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Ping Pong'),
+              ),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
 }
+
 
 void main() {
   runApp(MaterialApp(
     home: DashboardAdmin(),
   ));
+}
 }

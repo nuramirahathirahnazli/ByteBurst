@@ -78,6 +78,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
   }
 }
 
+
 // ============================ BOOKING PAGE 2 =============================
 
 class BookingFormPage2 extends StatefulWidget {
@@ -123,7 +124,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: clrUserPrimary,
-        title: Text('Court Information'),
+        title: Text('Booking Form'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -267,19 +268,77 @@ class BookingFormPage3 extends StatefulWidget {
 
 class _BookingFormPage3State extends State<BookingFormPage3> {
   int _page = 0;
+  bool _acknowledged = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Next Page'),
+        backgroundColor: clrUserPrimary,
+        title: Text('Booking Form'),
       ),
-      body: Center(
-        child: Text('This is the 3RD PAGE'),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Acknowledgement:',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            SizedBox(height: 10),
+            // Card for acknowledgment
+            Card(
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _acknowledged,
+                          onChanged: (value) {
+                            setState(() {
+                              _acknowledged = value!;
+                            });
+                          },
+                        ),
+                        Flexible(
+                          child: Text(
+                            'I acknowledge that the use of these sports facilities is at my own risk and I am solely responsible for myself. I will not blame the University Sports Excellence Center for any injuries, accidents, or deaths that occur to me before, during, or after the use of these sports facilities.',
+                            style: TextStyle(fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 10, // Adjust maxLines as needed
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            // Button to proceed if acknowledged
+            ElevatedButton(
+              onPressed: _acknowledged
+                  ? () {
+                      // Proceed to the next step
+                    }
+                  : null, // Disable button if not acknowledged
+              child: Text('Proceed'),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
 
 void main() {
   runApp(MaterialApp(

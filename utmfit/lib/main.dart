@@ -2,7 +2,9 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart';
+import 'package:utmfit/screens/admin/dashboard_admin.dart';
 import 'package:utmfit/screens/user/profile/edit_profile.dart';
 import 'package:utmfit/screens/user/profile/profile_user.dart';
 import 'package:utmfit/screens/user/booking/history_booking.dart';
@@ -28,7 +30,8 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       //home: dashboardUser(), 
-      home: MyHistoryBooking()
+       home: loginScreen()
+      // home: DashboardAdmin(),
     );
   }
 }

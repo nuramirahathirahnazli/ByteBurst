@@ -17,7 +17,7 @@ class signupScreen extends StatelessWidget {
         password: password,
       );
 
-      //after creating the user, create a new document in cloud firestore called USers
+      //after creating the user, create a new document in cloud firestore called Users
       FirebaseFirestore.instance
         .collection("Users")
         .doc(userCredential.user!.email)

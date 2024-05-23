@@ -1,8 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:utmfit/screens/user/profile/profile_user.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart'; // Add this import for date formatting
+
+// Define a BookingService class to handle Firestore interactions
+class BookingService {
+  final CollectionReference _bookingsCollection =
+      FirebaseFirestore.instance.collection('bookingform');
+
+  Future<void> addBooking({
+    required String userId,
+    required String game,
+    required int players,
+    required String date,
+    required String court,
+    required String time,
+  }) async {
+    try {
+      bool isAvailable = await checkCourtAvailability(date, court, time);
+      if (!isAvailable) {
+        throw Exception('Court is not available at the selected date and time.');
+      }
+
+      await _bookingsCollection.add({
+        'userId': userId,
+        'game': game,
+        'players': players,
+        'date': date,
+        'court': court,
+        'time': time,
+        'createdAt': Timestamp.now(),
+      });
+      print("Booking added successfully");
+    } catch (error) {
+      print("Failed to add booking: $error");
+      throw error;
+    }
+  }
+
+  Future<bool> checkCourtAvailability(String date, String court, String time) async {
+    try {
+      QuerySnapshot snapshot = await _bookingsCollection
+          .where('date', isEqualTo: date)
+          .where('court', isEqualTo: court)
+          .where('time', isEqualTo: time)
+          .get();
+
+      return snapshot.docs.isEmpty;
+    } catch (error) {
+      print("Failed to check court availability: $error");
+      throw error;
+    }
+  }
+}
+
+// ============================ BOOKING PAGE 1 =============================
 
 class BookingFormPage extends StatefulWidget {
   const BookingFormPage({Key? key}) : super(key: key);
@@ -78,7 +133,6 @@ class _BookingFormPageState extends State<BookingFormPage> {
   }
 }
 
-
 // ============================ BOOKING PAGE 2 =============================
 
 class BookingFormPage2 extends StatefulWidget {
@@ -94,30 +148,69 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
   int _selectedPlayers = 1;
   DateTime _selectedDate = DateTime.now();
   String _selectedCourt = 'Court 1';
-  String _selectedTime = '7:00 AM - 8:00 AM'; // Default selected time slot
+  String _selectedTime = '7:00 AM - 8:00 AM';
 
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  List<String> _availableTimeSlots = [];
 
-  // List of available time slots
-  List<String> _timeSlots = [
-    '7:00 AM - 8:00 AM',
-    '8:00 AM - 9:00 AM',
-    '9:00 AM - 10:00 AM',
-    '10:00 AM - 11:00 AM',
-    '11:00 AM - 12:00 PM',
-    '12:00 PM - 1:00 PM',
-    '1:00 PM - 2:00 PM',
-    '2:00 PM - 3:00 PM',
-    '3:00 PM - 4:00 PM',
-    '4:00 PM - 5:00 PM',
-    '5:00 PM - 6:00 PM',
-    '6:00 PM - 7:00 PM',
-    '7:00 PM - 8:00 PM',
-    '8:00 PM - 9:00 PM',
-    '9:00 PM - 10:00 PM',
-  ];
+  late String _userId;
+  final BookingService _bookingService = BookingService();
+
+  @override
+  void initState() {
+    super.initState();
+    _retrieveUserId();
+    _fetchAvailableTimeSlots();
+  }
+
+  void _retrieveUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        _userId = user.uid;
+      });
+    }
+  }
+
+  Future<void> _fetchAvailableTimeSlots() async {
+    String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+    List<String> allTimeSlots = [
+      '7:00 AM - 8:00 AM',
+      '8:00 AM - 9:00 AM',
+      '9:00 AM - 10:00 AM',
+      '10:00 AM - 11:00 AM',
+      '11:00 AM - 12:00 PM',
+      '12:00 PM - 1:00 PM',
+      '1:00 PM - 2:00 PM',
+      '2:00 PM - 3:00 PM',
+      '3:00 PM - 4:00 PM',
+      '4:00 PM - 5:00 PM',
+      '5:00 PM - 6:00 PM',
+      '6:00 PM - 7:00 PM',
+      '7:00 PM - 8:00 PM',
+      '8:00 PM - 9:00 PM',
+      '9:00 PM - 10:00 PM',
+    ];
+
+    List<String> availableTimeSlots = [];
+
+    for (String timeSlot in allTimeSlots) {
+      bool isAvailable = await _bookingService.checkCourtAvailability(
+        formattedDate,
+        _selectedCourt,
+        timeSlot,
+      );
+      if (isAvailable) {
+        availableTimeSlots.add(timeSlot);
+      }
+    }
+
+    setState(() {
+      _availableTimeSlots = availableTimeSlots;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +233,6 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
             ),
             SizedBox(height: 10),
             Text('Game:'),
-            // Dropdown menu to select the game
             DropdownButton<String>(
               value: _selectedGame,
               onChanged: (newValue) {
@@ -158,7 +250,6 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
             ),
             SizedBox(height: 20),
             Text('How many players:'),
-            // Dropdown menu to select the number of players
             DropdownButton<int>(
               value: _selectedPlayers,
               onChanged: (newValue) {
@@ -176,7 +267,6 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
             ),
             SizedBox(height: 20),
             Text('Select date:'),
-            // Calendar to select the date
             TableCalendar(
               firstDay: DateTime.now(),
               lastDay: DateTime.now().add(Duration(days: 365)),
@@ -189,6 +279,8 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
                 setState(() {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
+                  _selectedDate = selectedDay;
+                  _fetchAvailableTimeSlots(); // Fetch available time slots for the selected date
                 });
               },
               onPageChanged: (focusedDay) {
@@ -197,12 +289,12 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
             ),
             SizedBox(height: 20),
             Text('Court:'),
-            // Dropdown menu to select the court
             DropdownButton<String>(
               value: _selectedCourt,
               onChanged: (newValue) {
                 setState(() {
                   _selectedCourt = newValue!;
+                  _fetchAvailableTimeSlots(); // Fetch available time slots for the selected court
                 });
               },
               items: <String>['Court 1', 'Court 2', 'Court 3']
@@ -214,27 +306,28 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
               }).toList(),
             ),
             SizedBox(height: 20),
-            Text('Select time:'),
-            // Dropdown menu to select the time slot
-            DropdownButton<String>(
-              value: _selectedTime,
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedTime = newValue!;
-                });
-              },
-              items: _timeSlots
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
+            Text('Select Time Slot:'),
+            _availableTimeSlots.isEmpty
+                ? Text('No available time slots for the selected date and court.')
+                : DropdownButton<String>(
+                    value: _selectedTime,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedTime = newValue!;
+                      });
+                    },
+                    items: _availableTimeSlots
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to the next page of the booking form
+                _addBookingToFirestore();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => BookingFormPage3()),
@@ -255,7 +348,21 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
       ),
     );
   }
+
+  void _addBookingToFirestore() {
+    final bookingService = BookingService();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+    bookingService.addBooking(
+      userId: _userId,
+      game: _selectedGame,
+      players: _selectedPlayers,
+      date: formattedDate,
+      court: _selectedCourt,
+      time: _selectedTime,
+    );
+  }
 }
+
 
 // ============================ BOOKING PAGE 3 =============================
 
@@ -328,6 +435,10 @@ class _BookingFormPage3State extends State<BookingFormPage3> {
               onPressed: _acknowledged
                   ? () {
                       // Proceed to the next step
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => BookingFormPage4()),
+                      );
                     }
                   : null, // Disable button if not acknowledged
               child: Text('Proceed'),
@@ -335,10 +446,70 @@ class _BookingFormPage3State extends State<BookingFormPage3> {
           ],
         ),
       ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _page,
+        onItemTapped: (index) {
+          setState(() {
+            _page = index;
+          });
+        },
+      ),
     );
   }
 }
 
+// ============================ BOOKING PAGE 4 =============================
+
+class BookingFormPage4 extends StatelessWidget {
+  const BookingFormPage4({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: clrUserPrimary,
+        title: Text('Booking Confirmed'),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 100,
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Your booking has been confirmed!',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Thank you for booking with us. Enjoy your game!',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 40),
+              ElevatedButton(
+                onPressed: () {
+                  // Navigate back to the home or main page
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                },
+                child: Text('Back to Home'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 void main() {
   runApp(MaterialApp(

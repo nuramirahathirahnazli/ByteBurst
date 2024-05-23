@@ -24,7 +24,11 @@ class BookingService {
         throw Exception('Court is not available at the selected date and time.');
       }
 
-      await _bookingsCollection.add({
+      DocumentReference bookingRef = _bookingsCollection.doc();
+      String bookingId = bookingRef.id;
+
+      await bookingRef.set({
+        'bookingId': bookingId, // Store the booking ID
         'userId': userId,
         'game': game,
         'players': players,
@@ -33,7 +37,7 @@ class BookingService {
         'time': time,
         'createdAt': Timestamp.now(),
       });
-      print("Booking added successfully");
+      print("Booking added successfully with ID: $bookingId");
     } catch (error) {
       print("Failed to add booking: $error");
       throw error;
@@ -203,6 +207,19 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
     });
   }
 
+  void _addBookingToFirestore() {
+    final bookingService = BookingService();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+    bookingService.addBooking(
+      userId: _userId,
+      game: _selectedGame,
+      players: _selectedPlayers,
+      date: formattedDate,
+      court: _selectedCourt,
+      time: _selectedTime,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -330,22 +347,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
       bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
     );
   }
-
-  void _addBookingToFirestore() {
-    final bookingService = BookingService();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-    bookingService.addBooking(
-      userId: _userId,
-      game: _selectedGame,
-      players: _selectedPlayers,
-      date: formattedDate,
-      court: _selectedCourt,
-      time: _selectedTime,
-    );
-  }
 }
-
-// ============================ BOOKING PAGE 3 =============================
 
 class BookingFormPage3 extends StatefulWidget {
   const BookingFormPage3({Key? key}) : super(key: key);
@@ -431,7 +433,6 @@ class _BookingFormPage3State extends State<BookingFormPage3> {
     );
   }
 }
-// ============================ BOOKING PAGE 4 =============================
 
 class BookingFormPage4 extends StatelessWidget {
   const BookingFormPage4({Key? key}) : super(key: key);
@@ -466,7 +467,7 @@ class BookingFormPage4 extends StatelessWidget {
               Text(
                 'Thank you for booking with us. Enjoy your game!',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18),
+               style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 40),
               ElevatedButton(
@@ -488,3 +489,7 @@ void main() {
     home: BookingFormPage(),
   ));
 }
+
+
+
+

@@ -4,9 +4,8 @@ import 'package:utmfit/src/constants/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart'; // Add this import for date formatting
+import 'package:intl/intl.dart';
 
-// Define a BookingService class to handle Firestore interactions
 class BookingService {
   final CollectionReference _bookingsCollection =
       FirebaseFirestore.instance.collection('bookingform');
@@ -56,8 +55,6 @@ class BookingService {
     }
   }
 }
-
-// ============================ BOOKING PAGE 1 =============================
 
 class BookingFormPage extends StatefulWidget {
   const BookingFormPage({Key? key}) : super(key: key);
@@ -121,14 +118,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: _page,
-        onItemTapped: (index) {
-          setState(() {
-            _page = index;
-          });
-        },
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
     );
   }
 }
@@ -148,7 +138,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
   int _selectedPlayers = 1;
   DateTime _selectedDate = DateTime.now();
   String _selectedCourt = 'Court 1';
-  String _selectedTime = '7:00 AM - 8:00 AM';
+  String _selectedTime = '7:00 AM - 8:00 AM'; // Default selected time slot
 
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
@@ -162,7 +152,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
   void initState() {
     super.initState();
     _retrieveUserId();
-    _fetchAvailableTimeSlots();
+    _fetchAvailableTimeSlots(); // Initial fetch
   }
 
   void _retrieveUserId() async {
@@ -177,8 +167,6 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
   Future<void> _fetchAvailableTimeSlots() async {
     String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
     List<String> allTimeSlots = [
-      '7:00 AM - 8:00 AM',
-      '8:00 AM - 9:00 AM',
       '9:00 AM - 10:00 AM',
       '10:00 AM - 11:00 AM',
       '11:00 AM - 12:00 PM',
@@ -209,6 +197,9 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
 
     setState(() {
       _availableTimeSlots = availableTimeSlots;
+      if (_availableTimeSlots.isNotEmpty && !_availableTimeSlots.contains(_selectedTime)) {
+        _selectedTime = _availableTimeSlots.first;
+      }
     });
   }
 
@@ -280,8 +271,8 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
                   _selectedDay = selectedDay;
                   _focusedDay = focusedDay;
                   _selectedDate = selectedDay;
-                  _fetchAvailableTimeSlots(); // Fetch available time slots for the selected date
                 });
+                _fetchAvailableTimeSlots(); // Fetch available time slots when the date changes
               },
               onPageChanged: (focusedDay) {
                 _focusedDay = focusedDay;
@@ -294,8 +285,8 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
               onChanged: (newValue) {
                 setState(() {
                   _selectedCourt = newValue!;
-                  _fetchAvailableTimeSlots(); // Fetch available time slots for the selected court
                 });
+                _fetchAvailableTimeSlots(); // Fetch available time slots when the court changes
               },
               items: <String>['Court 1', 'Court 2', 'Court 3']
                   .map<DropdownMenuItem<String>>((String value) {
@@ -306,24 +297,22 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
               }).toList(),
             ),
             SizedBox(height: 20),
-            Text('Select Time Slot:'),
-            _availableTimeSlots.isEmpty
-                ? Text('No available time slots for the selected date and court.')
-                : DropdownButton<String>(
-                    value: _selectedTime,
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedTime = newValue!;
-                      });
-                    },
-                    items: _availableTimeSlots
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
+            Text('Select time:'),
+            DropdownButton<String>(
+              value: _selectedTime,
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedTime = newValue!;
+                });
+              },
+              items: _availableTimeSlots
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -338,14 +327,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: _page,
-        onItemTapped: (index) {
-          setState(() {
-            _page = index;
-          });
-        },
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
     );
   }
 
@@ -362,7 +344,6 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
     );
   }
 }
-
 
 // ============================ BOOKING PAGE 3 =============================
 
@@ -446,18 +427,10 @@ class _BookingFormPage3State extends State<BookingFormPage3> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(
-        selectedIndex: _page,
-        onItemTapped: (index) {
-          setState(() {
-            _page = index;
-          });
-        },
-      ),
+      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
     );
   }
 }
-
 // ============================ BOOKING PAGE 4 =============================
 
 class BookingFormPage4 extends StatelessWidget {
@@ -510,7 +483,6 @@ class BookingFormPage4 extends StatelessWidget {
     );
   }
 }
-
 void main() {
   runApp(MaterialApp(
     home: BookingFormPage(),

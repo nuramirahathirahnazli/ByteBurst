@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/screens/user/booking/bookingform.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
-import 'package:utmfit/src/constants/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SquashPage extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/admin/Booking/view_list_booking.dart';
 import 'package:utmfit/screens/admin/dashboard_admin.dart';
 import 'package:utmfit/src/constants/colors.dart';
 
@@ -39,38 +40,47 @@ class sidebar extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.sports_tennis_outlined),
-            title: Text('Facilities'),
+            leading: Icon(Icons.people),
+            title: Text('User'),
             selected: selectedIndex == 1,
             onTap: () {
               onItemTapped(1);
-              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BookingFormPage()));
+              // Add your desired navigation here
             },
           ),
           ListTile(
-            leading: Icon(Icons.people),
-            title: Text('User'),
+            leading: Icon(Icons.task),
+            title: Text('Booking'),
             selected: selectedIndex == 2,
             onTap: () {
               onItemTapped(2);
-              // Add your desired navigation here
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ViewListBooking()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.sports_tennis_outlined),
+            title: Text('Facilities'),
+            selected: selectedIndex == 3,
+            onTap: () {
+              onItemTapped(3);
+              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BookingFormPage()));
             },
           ),
           ListTile(
             leading: Icon(Icons.announcement),
             title: Text('Announcement'),
-            selected: selectedIndex == 3,
+            selected: selectedIndex == 4,
             onTap: () {
-              onItemTapped(3);
+              onItemTapped(4);
               // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Announcement()));
             },
           ),
           ListTile(
             leading: Icon(Icons.person),
             title: Text('Profile'),
-            selected: selectedIndex == 4,
+            selected: selectedIndex == 5,
             onTap: () {
-              onItemTapped(4);
+              onItemTapped(5);
               // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileUser()));
             },
           ),

@@ -26,3 +26,4 @@ const Color clrAdminPrimary = Color(0xFF3C66A5);
 const Color clrAdmin2 = Color(0xFFA1B9DD);
 const Color clrAdmin3 = Color(0xFFC2A300);
 const Color clrAdmin4 = Color(0xFFF0E59C);
+const Color clrAdminBase = Color(0XFFFFFCF4);

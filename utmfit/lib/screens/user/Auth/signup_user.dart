@@ -27,7 +27,8 @@ class signupScreen extends StatelessWidget {
           'password' : password,
           'contactNumber' : 'None', //default value
           'matricNumber': 'None', //default value
-          'userType' : 'Student' //default value
+          'userType' : 'Student', //default value
+          'userRole' : 'User' //default value, if tak, dia 'Admin'
         });
 
 

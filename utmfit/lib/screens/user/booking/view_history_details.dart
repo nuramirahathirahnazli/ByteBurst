@@ -9,6 +9,15 @@ class ViewHistoryDetails extends StatelessWidget {
 
   const ViewHistoryDetails({Key? key, required this.bookingID}) : super(key: key);
 
+  Future<String> _getMatricNumber(String userId) async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection("Users").doc(userId).get();
+    if (userDoc.exists) {
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+      return userData['matricNumber'] ?? 'Not available';
+    }
+    return 'Not available';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +27,7 @@ class ViewHistoryDetails extends StatelessWidget {
         title: Text('Booking Details'),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance.collection("booking").doc(bookingID).get(),
+        future: FirebaseFirestore.instance.collection("bookingform").doc(bookingID).get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -31,37 +40,52 @@ class ViewHistoryDetails extends StatelessWidget {
           }
 
           var booking = snapshot.data!.data() as Map<String, dynamic>;
+          String userId = booking['userId'];
 
-          return Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9, // Adjust the width to 90% of the screen width
-              child: Card(
-                elevation: 4.0,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0), // Increase padding
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, // Align items to the left
-                    children: [
-                      Text(
-                        '${booking['courtType']} Court',
-                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+          return FutureBuilder<String>(
+            future: _getMatricNumber(userId),
+            builder: (context, matricSnapshot) {
+              if (matricSnapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (matricSnapshot.hasError) {
+                return Center(child: Text('Error: ${matricSnapshot.error}'));
+              }
+
+              String matricNumber = matricSnapshot.data ?? 'Not available';
+
+              return Center(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9, // Adjust the width to 90% of the screen width
+                  child: Card(
+                    elevation: 4.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0), // Increase padding
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start, // Align items to the left
+                        children: [
+                          Text(
+                            '${booking['game']} Court',
+                            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          Divider(),
+                          _buildDetailItem('Matric Number', matricNumber),
+                          _buildDetailItem('Date', booking['date']),
+                          _buildDetailItem('Duration', '1 hour'),
+                          _buildDetailItem('Time', booking['time']),
+                          _buildDetailItem('Number of Players', booking['players']),
+                          _buildDetailItem('Court Number', booking['court']),
+                          Divider(),
+                          _buildDetailItem('Total Payment', 'RM XX'), // Replace XX with the actual amount
+                        ],
                       ),
-                      Divider(),
-                      _buildDetailItem('Matric Number', booking['matricNumber']),
-                      _buildDetailItem('Date', booking['dateBook']),
-                      _buildDetailItem('Duration', '2 hours'),
-                      _buildDetailItem('Time', booking['timeBook']),
-                      _buildDetailItem('Number of Players', booking['numOfPlayer']),
-                      _buildDetailItem('Court Number', booking['preferredCourt']),
-                      Divider(),
-                      _buildDetailItem('Total Payment', 'RM XX'), // Replace XX with the actual amount
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),
@@ -71,12 +95,11 @@ class ViewHistoryDetails extends StatelessWidget {
 
   Widget _buildDetailItem(String label, dynamic value) {
     String formattedValue = '';
+
     if (label == 'Date') {
-      DateTime dateTime = (value as Timestamp).toDate();
-      formattedValue = DateFormat.yMd().format(dateTime); // Format date as 'MM/dd/yyyy'
+      formattedValue = value; // Use the date string directly
     } else if (label == 'Time') {
-      DateTime dateTime = (value as Timestamp).toDate();
-      formattedValue = DateFormat.Hm().format(dateTime); // Format time as 'HH:mm'
+      formattedValue = value; // Use the time string directly
     } else {
       formattedValue = value.toString();
     }

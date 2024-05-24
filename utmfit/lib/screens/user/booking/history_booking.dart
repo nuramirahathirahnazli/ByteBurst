@@ -233,7 +233,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
   }
 
   void _confirmCancellation(String bookingId) {
-    FirebaseFirestore.instance.collection("booking").doc(bookingId).update({
+    FirebaseFirestore.instance.collection("bookingform").doc(bookingId).update({
       'status': 'Cancelled', // Update status to "Cancelled"
     }).then((value) {
       // Handle success

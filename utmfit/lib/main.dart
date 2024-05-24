@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: loginScreen()
-      //home: DashboardAdmin(),
+      //home: loginScreen()
+      home: MyHistoryBooking(),
     );
   }
 }

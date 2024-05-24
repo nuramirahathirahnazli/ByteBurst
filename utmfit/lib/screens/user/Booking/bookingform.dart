@@ -19,6 +19,7 @@ class BookingService {
   required String date,
   required String court,
   required String time,
+  String status = 'Confirmed',
 }) async {
   try {
     bool isAvailable = await checkCourtAvailability(date, court, time);
@@ -40,6 +41,7 @@ class BookingService {
       'court': court,
       'time': time,
       'createdAt': Timestamp.now(),
+      'status' : status,
     });
 
     print("Booking added successfully with ID: $bookingId");
@@ -153,7 +155,8 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
   DateTime _selectedDate = DateTime.now();
   String _selectedCourt = 'Court 1';
   String _selectedTime = '7:00 AM - 8:00 AM'; // Default selected time slot
-
+  String _status = 'Confirmed';
+  
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -227,6 +230,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
       date: formattedDate,
       court: _selectedCourt,
       time: _selectedTime,
+      status: _status,
     );
   }
 

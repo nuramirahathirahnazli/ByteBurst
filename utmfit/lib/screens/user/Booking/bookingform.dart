@@ -33,7 +33,7 @@ class BookingService {
     DocumentReference bookingRef = _bookingsCollection.doc(bookingId);
     await bookingRef.set({
       'bookingId': bookingId,
-      'userId': userId,
+      'userId': userId, // Store the user's display name or email
       'game': game,
       'players': players,
       'date': date,
@@ -45,7 +45,7 @@ class BookingService {
     print("Booking added successfully with ID: $bookingId");
   } catch (error) {
     print("Failed to add booking: $error");
-    rethrow;
+    throw error;
   }
 }
 
@@ -173,7 +173,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       setState(() {
-        _userId = user.uid;
+        _userId = user.email ?? ''; // Set _userId to display name or email
       });
     }
   }

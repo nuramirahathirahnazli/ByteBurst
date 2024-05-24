@@ -24,10 +24,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => dashboardUser()));
             break;
           case 1:
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BookingFormPage()));
+            //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BookingFormPage()));
             break;
           case 2:
-            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AddScreen()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BookingFormPage()));
             break;
           case 3:
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHistoryBooking()));

@@ -13,37 +13,45 @@ class BookingService {
       FirebaseFirestore.instance.collection('bookingform');
 
   Future<void> addBooking({
-    required String userId,
-    required String game,
-    required int players,
-    required String date,
-    required String court,
-    required String time,
-  }) async {
-    try {
-      bool isAvailable = await checkCourtAvailability(date, court, time);
-      if (!isAvailable) {
-        throw Exception('Court is not available at the selected date and time.');
-      }
-
-      DocumentReference bookingRef = _bookingsCollection.doc();
-      String bookingId = bookingRef.id;
-
-      await bookingRef.set({
-        'bookingId': bookingId, // Store the booking ID
-        'userId': userId,
-        'game': game,
-        'players': players,
-        'date': date,
-        'court': court,
-        'time': time,
-        'createdAt': Timestamp.now(),
-      });
-      print("Booking added successfully with ID: $bookingId");
-    } catch (error) {
-      print("Failed to add booking: $error");
-      throw error;
+  required String userId,
+  required String game,
+  required int players,
+  required String date,
+  required String court,
+  required String time,
+}) async {
+  try {
+    bool isAvailable = await checkCourtAvailability(date, court, time);
+    if (!isAvailable) {
+      throw Exception('Court is not available at the selected date and time.');
     }
+
+    // Generate the booking ID
+    int bookingCount = await _getBookingCount();
+    String bookingId = 'B${bookingCount.toString().padLeft(2, '0')}';
+
+    DocumentReference bookingRef = _bookingsCollection.doc(bookingId);
+    await bookingRef.set({
+      'bookingId': bookingId,
+      'userId': userId,
+      'game': game,
+      'players': players,
+      'date': date,
+      'court': court,
+      'time': time,
+      'createdAt': Timestamp.now(),
+    });
+
+    print("Booking added successfully with ID: $bookingId");
+  } catch (error) {
+    print("Failed to add booking: $error");
+    rethrow;
+  }
+}
+
+  Future<int> _getBookingCount() async {
+    QuerySnapshot snapshot = await _bookingsCollection.get();
+    return snapshot.docs.length + 1;
   }
 
   Future<bool> checkCourtAvailability(String date, String court, String time) async {

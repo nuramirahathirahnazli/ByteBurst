@@ -276,11 +276,4 @@ class _DashboardAdminState extends State<DashboardAdmin> {
     ),
   );
 }
-
-
-void main() {
-  runApp(MaterialApp(
-    home: DashboardAdmin(),
-  ));
-}
 }

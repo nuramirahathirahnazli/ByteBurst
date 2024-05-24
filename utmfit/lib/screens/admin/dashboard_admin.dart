@@ -14,31 +14,33 @@ class _DashboardAdminState extends State<DashboardAdmin> {
   int totalUsers = 0;
   int totalBooking = 0;
   int _selectedIndex = 0;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     fetchTotals();
-    // fetchFacilities();
   }
 
-  void fetchTotals() async {
+  Future<void> fetchTotals() async {
     try {
       // Fetch total number of users
       QuerySnapshot usersSnapshot =
           await FirebaseFirestore.instance.collection('Users').get();
-      setState(() {
-        totalUsers = usersSnapshot.size;
-      });
-
       // Fetch total number of bookings
       QuerySnapshot bookingSnapshot =
-          await FirebaseFirestore.instance.collection('booking').get();
+          await FirebaseFirestore.instance.collection('bookingform').get();
+      
       setState(() {
+        totalUsers = usersSnapshot.size;
         totalBooking = bookingSnapshot.size;
+        _isLoading = false;
       });
     } catch (e) {
       print("Error fetching totals: $e");
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -48,7 +50,7 @@ class _DashboardAdminState extends State<DashboardAdmin> {
     });
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: clrAdmin2,
@@ -59,96 +61,98 @@ class _DashboardAdminState extends State<DashboardAdmin> {
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ),
-      body: Stack(
-        children: <Widget>[
-          Positioned(
-            child: Container(
-              height: 100.0,
-              decoration: BoxDecoration(
-                color: clrAdminPrimary,
-              ),
-            ),
-          ),
-          SingleChildScrollView(
-            child: Column(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Stack(
               children: <Widget>[
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Welcome Admin!',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                Positioned(
+                  child: Container(
+                    height: 100.0,
+                    decoration: BoxDecoration(
+                      color: clrAdminPrimary,
                     ),
                   ),
                 ),
-                SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.all(1),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                SingleChildScrollView(
+                  child: Column(
                     children: <Widget>[
-                      _buildStatisticCard(
-                        icon: Icons.people,
-                        total: totalUsers,
-                        label: 'Total Users',
-                        labelColor: Colors.blue,
+                      SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Welcome Admin!',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      _buildStatisticCard(
-                        icon: Icons.calendar_today,
-                        total: totalBooking,
-                        label: 'Total Booking',
-                        labelColor: Colors.green,
+                      SizedBox(height: 40),
+                      Padding(
+                        padding: const EdgeInsets.all(1),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: <Widget>[
+                            _buildStatisticCard(
+                              icon: Icons.people,
+                              total: totalUsers,
+                              label: 'Total Users',
+                              labelColor: Colors.blue,
+                            ),
+                            _buildStatisticCard(
+                              icon: Icons.calendar_today,
+                              total: totalBooking,
+                              label: 'Total Booking',
+                              labelColor: Colors.green,
+                            ),
+                            _buildStatisticCard(
+                              icon: Icons.sports_soccer,
+                              total: 3,
+                              label: 'Total Facilities',
+                              labelColor: Colors.orange,
+                            ),
+                          ],
+                        ),
                       ),
-                      _buildStatisticCard(
-                        icon: Icons.sports_soccer,
-                        total: 3,
-                        label: 'Total Facilities',
-                        labelColor: Colors.orange,
+                      SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Facilities',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: clrAdminPrimary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                              _buildFacilitiesTable(),
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Facilities',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: clrAdminPrimary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        _buildFacilitiesTable(),
-                        SizedBox(height: 10),
-                      ],
-                    ),
-                  ),
-                ),
               ],
             ),
-          ),
-        ],
-      ),
     );
   }
 

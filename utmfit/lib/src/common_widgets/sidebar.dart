@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:utmfit/screens/admin/Booking/view_list_booking.dart';
 import 'package:utmfit/screens/admin/dashboard_admin.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/constants/colors.dart';
 
 class sidebar extends StatelessWidget {
@@ -11,6 +13,14 @@ class sidebar extends StatelessWidget {
     required this.selectedIndex,
     required this.onItemTapped,
   });
+
+Future<void> _signOut(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => loginScreen()),  // Navigate to the login screen
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +92,14 @@ class sidebar extends StatelessWidget {
             onTap: () {
               onItemTapped(5);
               // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileUser()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.exit_to_app),
+            title: Text('Sign Out'),
+            selected: false,
+            onTap: () {
+              _signOut(context);
             },
           ),
         ],

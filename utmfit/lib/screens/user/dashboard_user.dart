@@ -26,23 +26,6 @@ class _dashboardUserState extends State<dashboardUser> {
       backgroundColor: clrBase, // Set the entire background screen color
       appBar: AppBar(
         title: Text('UTM FIT'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const loginScreen()),
-              );
-            },
-            child: Text(
-              'Sign In',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 187, 0),
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: _page,

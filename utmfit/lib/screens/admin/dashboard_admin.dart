@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:utmfit/src/common_widgets/sidebar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
-import 'package:utmfit/screens/admin/announcements_page.dart';
+import 'package:utmfit/screens/admin/Announcement/announcements_page.dart';
 
 
 

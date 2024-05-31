@@ -178,6 +178,7 @@ class _ViewListBookingState extends State<ViewListBooking> {
                     return Center(child: Text('No bookings found'));
                   } else {
                     return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
                       child: DataTable(
                         columns: const [
                           DataColumn(label: Text('No.')),

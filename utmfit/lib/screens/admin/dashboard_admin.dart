@@ -3,7 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:utmfit/src/common_widgets/sidebar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
-import 'announcement_form_page.dart'; 
+import 'package:utmfit/screens/admin/announcements_page.dart';
+
+
 
 class DashboardAdmin extends StatefulWidget {
   const DashboardAdmin({Key? key}) : super(key: key);
@@ -18,8 +20,6 @@ class _DashboardAdminState extends State<DashboardAdmin> {
   int _selectedIndex = 0;
   bool _isLoading = true;
 
-  final CollectionReference announcementsCollection = FirebaseFirestore.instance.collection('announcements');
-
   @override
   void initState() {
     super.initState();
@@ -29,10 +29,12 @@ class _DashboardAdminState extends State<DashboardAdmin> {
   Future<void> fetchTotals() async {
     try {
       // Fetch total number of users
-      QuerySnapshot usersSnapshot = await FirebaseFirestore.instance.collection('Users').get();
+      QuerySnapshot usersSnapshot =
+          await FirebaseFirestore.instance.collection('Users').get();
       // Fetch total number of bookings
-      QuerySnapshot bookingSnapshot = await FirebaseFirestore.instance.collection('bookingform').get();
-
+      QuerySnapshot bookingSnapshot =
+          await FirebaseFirestore.instance.collection('bookingform').get();
+      
       setState(() {
         totalUsers = usersSnapshot.size;
         totalBooking = bookingSnapshot.size;
@@ -50,26 +52,7 @@ class _DashboardAdminState extends State<DashboardAdmin> {
     setState(() {
       _selectedIndex = index;
     });
-  }
 
-  void _navigateToFormPage({String? announcementId, String? title, String? description}) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => AnnouncementFormPage(
-          announcementId: announcementId,
-          initialTitle: title,
-          initialDescription: description,
-        ),
-      ),
-    );
-  }
-
-  void _deleteAnnouncement(String announcementId) async {
-    await announcementsCollection.doc(announcementId).delete();
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Announcement deleted successfully'),
-    ));
   }
 
   @override
@@ -170,43 +153,6 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Announcements',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: clrAdminPrimary,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.add),
-                                      onPressed: () => _navigateToFormPage(),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              _buildAnnouncementsList(),
-                              SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -265,126 +211,78 @@ class _DashboardAdminState extends State<DashboardAdmin> {
     );
   }
 
-  Widget _buildFacilitiesTable() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Table(
-        border: TableBorder.all(color: Colors.black),
-        children: [
-          TableRow(
-            children: [
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Number', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
+ Widget _buildFacilitiesTable() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    child: Table(
+      border: TableBorder.all(color: Colors.black),
+      children: [
+        TableRow(
+          children: [
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Number', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Name Facilities', style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
+            ),
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Name Facilities', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
-            ],
-          ),
-          TableRow(
-            children: [
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('1'),
-                ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('1'),
               ),
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Squash'),
-                ),
+            ),
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Squash'),
               ),
-            ],
-          ),
-          TableRow(
-            children: [
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('2'),
-                ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('2'),
               ),
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Badminton'),
-                ),
+            ),
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Badminton'),
               ),
-            ],
-          ),
-          TableRow(
-            children: [
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('3'),
-                ),
+            ),
+          ],
+        ),
+        TableRow(
+          children: [
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('3'),
               ),
-              TableCell(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Ping Pong'),
-                ),
+            ),
+            TableCell(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Ping Pong'),
               ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAnnouncementsList() {
-  return StreamBuilder(
-    stream: announcementsCollection.snapshots(),
-    builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-      if (streamSnapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
-      }
-
-      if (streamSnapshot.hasError) {
-        return Center(child: Text('Error: ${streamSnapshot.error}'));
-      }
-
-      if (streamSnapshot.hasData) {
-        return ListView.builder(
-          shrinkWrap: true,
-          itemCount: streamSnapshot.data!.docs.length,
-          itemBuilder: (context, index) {
-            final DocumentSnapshot documentSnapshot = streamSnapshot.data!.docs[index];
-            return ListTile(
-              title: Text(documentSnapshot['title']),
-              subtitle: Text(documentSnapshot['description']),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () => _navigateToFormPage(
-                      announcementId: documentSnapshot.id,
-                      title: documentSnapshot['title'],
-                      description: documentSnapshot['description'],
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () => _deleteAnnouncement(documentSnapshot.id),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }
-
-      return Center(child: Text('No announcements found.'));
-    },
+            ),
+          ],
+        ),
+      ],
+    ),
   );
 }
 }

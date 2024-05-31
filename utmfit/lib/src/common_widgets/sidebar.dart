@@ -4,6 +4,8 @@ import 'package:utmfit/screens/admin/Booking/view_list_booking.dart';
 import 'package:utmfit/screens/admin/dashboard_admin.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/constants/colors.dart';
+import 'package:utmfit/screens/admin/announcements_page.dart';
+
 
 class sidebar extends StatelessWidget {
   final int selectedIndex;
@@ -82,7 +84,7 @@ Future<void> _signOut(BuildContext context) async {
             selected: selectedIndex == 4,
             onTap: () {
               onItemTapped(4);
-              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Announcement()));
+               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AnnouncementsPage()));
             },
           ),
           ListTile(

@@ -61,6 +61,39 @@ class _ViewListBookingState extends State<ViewListBooking> {
     }
   }
 
+  void _showBookingDetails(BuildContext context, Map<String, dynamic> bookingDetails) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Booking Details'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Booking ID: ${bookingDetails['bookingId'] ?? 'N/A'}'),
+                Text('Court: ${bookingDetails['court'] ?? 'N/A'}'),
+                Text('Date: ${formatDate(bookingDetails['date'] ?? 'N/A')}'),
+                Text('Game: ${bookingDetails['game'] ?? 'N/A'}'),
+                Text('Players: ${bookingDetails['players'] ?? 'N/A'}'),
+                Text('Status: ${bookingDetails['status'] ?? 'N/A'}'),
+                Text('Time: ${bookingDetails['time'] ?? 'N/A'}'),
+                Text('User ID: ${bookingDetails['userId'] ?? 'N/A'}'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,7 +181,7 @@ class _ViewListBookingState extends State<ViewListBooking> {
                       child: DataTable(
                         columns: const [
                           DataColumn(label: Text('No.')),
-                          DataColumn(label: Text('Email User')),
+                          DataColumn(label: Text('Name')),
                           DataColumn(label: Text('Date')),
                           DataColumn(label: Text('Type')),
                           DataColumn(label: Text('Status')),
@@ -167,7 +200,7 @@ class _ViewListBookingState extends State<ViewListBooking> {
                               IconButton(
                                 icon: Icon(Icons.visibility),
                                 onPressed: () {
-                                  // Add action for view button
+                                  _showBookingDetails(context, booking);
                                 },
                               ),
                             ),

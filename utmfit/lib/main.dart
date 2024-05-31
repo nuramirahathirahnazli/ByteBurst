@@ -29,14 +29,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-<<<<<<< Updated upstream
-      home: loginScreen()
+      home: DashboardAdmin()
       //home: DashboardAdmin(),
-=======
-      //home: dashboardUser(), 
-       home: DashboardAdmin()
-      // home: DashboardAdmin(),
->>>>>>> Stashed changes
     );
   }
 }

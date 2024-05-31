@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:utmfit/src/common_widgets/sidebar.dart';
 import 'package:utmfit/src/constants/colors.dart';
-<<<<<<< Updated upstream
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
-=======
-import 'announcement_form_page.dart'; // Import the announcement form page
->>>>>>> Stashed changes
+import 'announcement_form_page.dart'; 
 
 class DashboardAdmin extends StatefulWidget {
   const DashboardAdmin({Key? key}) : super(key: key);
@@ -19,11 +16,9 @@ class _DashboardAdminState extends State<DashboardAdmin> {
   int totalUsers = 0;
   int totalBooking = 0;
   int _selectedIndex = 0;
-<<<<<<< Updated upstream
   bool _isLoading = true;
-=======
+
   final CollectionReference announcementsCollection = FirebaseFirestore.instance.collection('announcements');
->>>>>>> Stashed changes
 
   @override
   void initState() {
@@ -34,22 +29,10 @@ class _DashboardAdminState extends State<DashboardAdmin> {
   Future<void> fetchTotals() async {
     try {
       // Fetch total number of users
-<<<<<<< Updated upstream
-      QuerySnapshot usersSnapshot =
-          await FirebaseFirestore.instance.collection('Users').get();
-      // Fetch total number of bookings
-      QuerySnapshot bookingSnapshot =
-          await FirebaseFirestore.instance.collection('bookingform').get();
-      
-=======
       QuerySnapshot usersSnapshot = await FirebaseFirestore.instance.collection('Users').get();
-      setState(() {
-        totalUsers = usersSnapshot.size;
-      });
-
       // Fetch total number of bookings
-      QuerySnapshot bookingSnapshot = await FirebaseFirestore.instance.collection('booking').get();
->>>>>>> Stashed changes
+      QuerySnapshot bookingSnapshot = await FirebaseFirestore.instance.collection('bookingform').get();
+
       setState(() {
         totalUsers = usersSnapshot.size;
         totalBooking = bookingSnapshot.size;
@@ -69,13 +52,26 @@ class _DashboardAdminState extends State<DashboardAdmin> {
     });
   }
 
-<<<<<<< Updated upstream
-=======
-  void _deleteAnnouncement(String id) {
-    announcementsCollection.doc(id).delete();
+  void _navigateToFormPage({String? announcementId, String? title, String? description}) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AnnouncementFormPage(
+          announcementId: announcementId,
+          initialTitle: title,
+          initialDescription: description,
+        ),
+      ),
+    );
   }
 
->>>>>>> Stashed changes
+  void _deleteAnnouncement(String announcementId) async {
+    await announcementsCollection.doc(announcementId).delete();
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Announcement deleted successfully'),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,47 +170,46 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-<<<<<<< Updated upstream
-=======
-                SizedBox(height: 20),
-                _buildAnnouncementsSection(),
-                SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
                             children: [
-                              Text(
-                                'Facilities',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: clrAdminPrimary,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Announcements',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: clrAdminPrimary,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.add),
+                                      onPressed: () => _navigateToFormPage(),
+                                    ),
+                                  ],
                                 ),
                               ),
+                              SizedBox(height: 10),
+                              _buildAnnouncementsList(),
+                              SizedBox(height: 10),
                             ],
                           ),
                         ),
-                        SizedBox(height: 10),
-                        _buildFacilitiesTable(),
-                        SizedBox(height: 10),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
->>>>>>> Stashed changes
               ],
             ),
     );
@@ -338,15 +333,6 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                   child: Text('Ping Pong'),
                 ),
               ),
-<<<<<<< Updated upstream
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-=======
             ],
           ),
         ],
@@ -354,102 +340,51 @@ class _DashboardAdminState extends State<DashboardAdmin> {
     );
   }
 
-  Widget _buildAnnouncementsSection() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildAnnouncementsList() {
+  return StreamBuilder(
+    stream: announcementsCollection.snapshots(),
+    builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+      if (streamSnapshot.connectionState == ConnectionState.waiting) {
+        return Center(child: CircularProgressIndicator());
+      }
+
+      if (streamSnapshot.hasError) {
+        return Center(child: Text('Error: ${streamSnapshot.error}'));
+      }
+
+      if (streamSnapshot.hasData) {
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: streamSnapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            final DocumentSnapshot documentSnapshot = streamSnapshot.data!.docs[index];
+            return ListTile(
+              title: Text(documentSnapshot['title']),
+              subtitle: Text(documentSnapshot['description']),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Announcements',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: clrAdminPrimary,
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () => _navigateToFormPage(
+                      announcementId: documentSnapshot.id,
+                      title: documentSnapshot['title'],
+                      description: documentSnapshot['description'],
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.add, color: clrAdminPrimary),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AnnouncementFormPage(),
-                        ),
-                      );
-                    },
+                    icon: Icon(Icons.delete),
+                    onPressed: () => _deleteAnnouncement(documentSnapshot.id),
                   ),
                 ],
               ),
-            ),
-            SizedBox(height: 10),
-            StreamBuilder<QuerySnapshot>(
-              stream: announcementsCollection.snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
+            );
+          },
+        );
+      }
 
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    var announcement = snapshot.data!.docs[index];
-                    return ListTile(
-                      title: Text(announcement['title']),
-                      subtitle: Text(announcement['description']),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit, color: clrAdminPrimary),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AnnouncementFormPage(
-                                    docId: announcement.id,
-                                    title: announcement['title'],
-                                    description: announcement['description'],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete, color: clrAdminPrimary),
-                            onPressed: () {
-                              _deleteAnnouncement(announcement.id);
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-            SizedBox(height: 10),
-          ],
-        ),
-      ),
-    );
-  }
+      return Center(child: Text('No announcements found.'));
+    },
+  );
 }
-
-void main() {
-  runApp(MaterialApp(
-    home: DashboardAdmin(),
-  ));
->>>>>>> Stashed changes
 }

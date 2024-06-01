@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:utmfit/src/common_widgets/sidebar.dart';
 import 'package:utmfit/src/constants/colors.dart';
+import 'package:utmfit/src/common_widgets/admin_bottom_navigation.dart'; // Import the new widget
 
 class ViewListBooking extends StatefulWidget {
   const ViewListBooking({Key? key}) : super(key: key);
@@ -216,65 +217,10 @@ class _ViewListBookingState extends State<ViewListBooking> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home,
-              color: _selectedIndex == 0 ? clrAdmin4 : clrAdminPrimary,
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.people,
-              color: _selectedIndex == 1 ? clrAdmin4 : clrAdminPrimary,
-            ),
-            label: 'User',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.book,
-              color: _selectedIndex == 2 ? clrAdmin4 : clrAdminPrimary,
-            ),
-            label: 'Booking',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.settings,
-              color: _selectedIndex == 3 ? clrAdmin4 : clrAdminPrimary,
-            ),
-            label: 'Facilities',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: clrAdmin4,
-        unselectedItemColor: clrAdminPrimary,
-        onTap: _onItemTapped,
+      bottomNavigationBar: AdminBottomNavigation(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
       ),
     );
-  }
-}
-
-class CurvePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint = Paint();
-    paint.color = clrAdminPrimary;
-    paint.style = PaintingStyle.fill;
-
-    var path = Path();
-    path.moveTo(0, size.height * 0.5);
-    path.quadraticBezierTo(size.width / 2, size.height, size.width, size.height * 0.5);
-    path.lineTo(size.width, 0);
-    path.lineTo(0, 0);
-    path.close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
   }
 }

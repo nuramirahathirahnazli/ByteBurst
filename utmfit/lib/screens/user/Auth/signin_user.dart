@@ -1,12 +1,17 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:utmfit/screens/user/Auth/signup_user.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart';
+import 'package:utmfit/screens/admin/dashboard_admin.dart';
 import 'package:utmfit/screens/authentication/forgotpassword.dart';
 
 class loginScreen extends StatelessWidget {
   // Firebase Authentication instance
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;  // Firestore instance
 
   const loginScreen({Key? key}) : super(key: key);
 
@@ -14,13 +19,23 @@ class loginScreen extends StatelessWidget {
       BuildContext context, String email, String password) async {
     try {
       // Sign in user with email and password
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      // Navigate to home screen or any other screen on successful login
-      // Replace HomeScreen() with your desired screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => dashboardUser()),
-      );
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+      // Check if the signed-in user is an admin
+      DocumentSnapshot adminSnapshot = await _firestore.collection('admins').doc(email).get();
+      if (adminSnapshot.exists) {
+        // Navigate to admin dashboard
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DashboardAdmin()), // Use your admin dashboard screen
+        );
+      } else {
+        // Navigate to user dashboard
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => dashboardUser()),
+        );
+      }
     } catch (e) {
       // Handle login errors
       print("Error signing in: $e");
@@ -127,29 +142,28 @@ class loginScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-  height: 20,
-),
-Align(
-  alignment: Alignment.centerRight,
-  child: GestureDetector(
-    onTap: () {
-      // Navigate to the Forgot Password screen
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ForgotPassWidget()),
-      );
-    },
-    child: Text(
-      'Forgot Password?',
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 17,
-        color: Color(0xff281537),
-      ),
-    ),
-  ),
-),
-
+                      height: 20,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          // Navigate to the Forgot Password screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ForgotPassWidget()),
+                          );
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                            color: Color(0xff281537),
+                          ),
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       height: 70,
                     ),

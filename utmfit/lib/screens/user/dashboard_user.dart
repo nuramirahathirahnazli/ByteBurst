@@ -1,9 +1,11 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:utmfit/screens/user/announcement_detail.dart';
+import 'package:utmfit/screens/user/Announcement/announcement_detail.dart';
 import 'package:utmfit/screens/user/facilitiesDetails/courtDetails.dart';
 
 
@@ -26,23 +28,6 @@ class _dashboardUserState extends State<dashboardUser> {
       backgroundColor: clrBase, // Set the entire background screen color
       appBar: AppBar(
         title: Text('UTM FIT'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const loginScreen()),
-              );
-            },
-            child: Text(
-              'Sign In',
-              style: TextStyle(
-                color: Color.fromARGB(255, 255, 187, 0),
-                fontSize: 16,
-              ),
-            ),
-          ),
-        ],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: _page,

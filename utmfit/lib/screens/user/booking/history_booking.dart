@@ -32,7 +32,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
           title: const Text('My Bookings'),
         ),
         body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection("booking").snapshots(),
+          stream: FirebaseFirestore.instance.collection("bookingform").snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final bookingData = snapshot.data!.docs;
@@ -73,13 +73,14 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
       itemCount: bookingData.length,
       itemBuilder: (context, index) {
         var booking = bookingData[index].data() as Map<String, dynamic>;
+
         if (booking['status'] == status) {
           return _buildBookingItem(
-            date: (booking['dateBook'] as Timestamp).toDate(),
-            courtName: booking['courtType'] + ' Court',
+            date: booking['date'],
+            game: booking['game'] + ' Court',
             status: status,
             icon: Icons.sports_tennis,
-            bookingID: booking['bookingID'], // Pass bookingID to _buildBookingItem
+            bookingId: booking['bookingId'], // Pass bookingID to _buildBookingItem
           );
         }
         return const SizedBox.shrink();
@@ -88,11 +89,11 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
   }
 
   Widget _buildBookingItem({
-    required DateTime date,
-    required String courtName,
+    required String date,
+    required String game,
     required String status,
     required IconData icon,
-    required String bookingID, // Add bookingId to identify the specific booking
+    required String bookingId, 
   }) {
     Color statusColor = clrStatusConfirmed;
     if (status == 'Completed') {
@@ -104,8 +105,9 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
     Color viewButtonColor = clrViewDetails;
     Color cancelButtonColor = clrCancel;
 
-    String formattedDate = DateFormat.yMMMMd().format(date);
-    String dayOfWeek = DateFormat.E().format(date);
+    DateTime dateTime = DateTime.parse(date); // Convert the date string to a DateTime object
+    String formattedDate = DateFormat.yMMMMd().format(dateTime);
+    String dayOfWeek = DateFormat.E().format(dateTime);
 
     return Card(
       //color: clrUser3,//background color
@@ -131,7 +133,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
               children: [
                 Expanded(
                   child: Text(
-                    courtName,
+                    game,
                     style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -146,7 +148,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ViewHistoryDetails(bookingID: bookingID), // Pass bookingId to ViewHistoryDetails screen
+                                builder: (context) => ViewHistoryDetails(bookingID: bookingId), // Pass bookingId to ViewHistoryDetails screen
                               ),
                             );
                           },
@@ -160,7 +162,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
                         SizedBox(height: 20), // Add space between the buttons
                         ElevatedButton(
                           onPressed: () {
-                            _cancelBooking(context, bookingID); // Call function to cancel booking
+                            _cancelBooking(context, bookingId); // Call function to cancel booking
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: cancelButtonColor, // Set button color based on status
@@ -180,7 +182,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ViewHistoryDetails(bookingID: bookingID), // Pass bookingId to ViewHistoryDetails screen
+                            builder: (context) => ViewHistoryDetails(bookingID: bookingId), // Pass bookingId to ViewHistoryDetails screen
                           ),
                         );
                       },
@@ -231,7 +233,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
   }
 
   void _confirmCancellation(String bookingId) {
-    FirebaseFirestore.instance.collection("booking").doc(bookingId).update({
+    FirebaseFirestore.instance.collection("bookingform").doc(bookingId).update({
       'status': 'Cancelled', // Update status to "Cancelled"
     }).then((value) {
       // Handle success

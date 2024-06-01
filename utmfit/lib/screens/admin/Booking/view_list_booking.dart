@@ -201,6 +201,7 @@ class _ViewListBookingState extends State<ViewListBooking> {
                             DataCell(
                               IconButton(
                                 icon: Icon(Icons.visibility),
+                                color: Colors.blue,
                                 onPressed: () {
                                   _showBookingDetails(context, booking);
                                 },

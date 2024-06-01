@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:utmfit/src/common_widgets/sidebar.dart';
-import 'package:utmfit/src/constants/colors.dart'; // Import color constants from DashboardAdmin
+import 'package:utmfit/src/constants/colors.dart'; // Import color constants
+import 'package:utmfit/src/common_widgets/admin_bottom_navigation.dart'; // Import the new widget
 import 'announcement_form_page.dart'; // Import the form page
 
 class AnnouncementsPage extends StatefulWidget {
@@ -10,94 +11,298 @@ class AnnouncementsPage extends StatefulWidget {
 }
 
 class _AnnouncementsPageState extends State<AnnouncementsPage> {
-  final CollectionReference announcementsCollection =
-      FirebaseFirestore.instance.collection('announcements');
+  late Future<List<Map<String, dynamic>>> _announcements;
+  late Future<int> _totalAnnouncements;
+  int _selectedIndex = 4;
 
-  void _navigateToFormPage(
-      {String? announcementId, String? title, String? description}) {
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  void _fetchData() {
+    setState(() {
+      _announcements = fetchAnnouncements();
+      _totalAnnouncements = fetchTotalAnnouncements();
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAnnouncements() async {
+    List<Map<String, dynamic>> announcementsList = [];
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('announcements').get();
+      for (var doc in snapshot.docs) {
+        announcementsList.add(doc.data() as Map<String, dynamic>);
+      }
+    } catch (e) {
+      print("Error fetching announcements: $e");
+    }
+    return announcementsList;
+  }
+
+  Future<int> fetchTotalAnnouncements() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('announcements').get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print("Error fetching total announcements: $e");
+      return 0;
+    }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void _navigateToFormPage({String? announcementId, String? title, String? description}) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => AnnouncementFormPage(
           announcementId: announcementId,
           initialTitle: title,
           initialDescription: description,
+          onSave: _fetchData,
         ),
       ),
     );
   }
 
   void _deleteAnnouncement(String announcementId) async {
-    await announcementsCollection.doc(announcementId).delete();
+    await FirebaseFirestore.instance.collection('announcements').doc(announcementId).delete();
+    _fetchData();
+  }
+
+  void _showAnnouncementDetails(BuildContext context, Map<String, dynamic> announcementDetails) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Announcement Details'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Title: ${announcementDetails['title'] ?? 'N/A'}'),
+                Text('Description: ${announcementDetails['description'] ?? 'N/A'}'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: clrAdmin2, // Use the same background color as DashboardAdmin
-      appBar: _buildAppBar(),
-      body: _buildAnnouncementsList(),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      title: Text('Announcements'),
-      backgroundColor: clrAdminPrimary, // Use the same header color as DashboardAdmin
-      actions: [
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => _navigateToFormPage(),
+      backgroundColor: clrAdminBase,
+      appBar: AppBar(
+        backgroundColor: clrAdminPrimary,
+        elevation: 0,
+        title: Row(
+          children: [
+            Spacer(),
+            Text('Hi, Admin', style: TextStyle(color: Colors.white)),
+            Spacer(),
+            TextButton(
+              onPressed: () {
+                // Add sign out functionality here
+              },
+              child: Text(
+                'Sign Out',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
         ),
-      ],
-    );
-  }
-
-  Widget _buildAnnouncementsList() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: announcementsCollection.snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        return ListView.builder(
-          itemCount: snapshot.data!.docs.length,
-          itemBuilder: (context, index) {
-            var announcement = snapshot.data!.docs[index];
-            return ListTile(
-              title: Text(
-                announcement['title'],
-                style: TextStyle(color: Colors.white), // Adjust text color to match the design
-              ),
-              subtitle: Text(
-                announcement['description'],
-                style: TextStyle(color: Colors.white), // Adjust text color to match the design
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.edit),
-                    color: Colors.white, // Adjust icon color to match the design
-                    onPressed: () => _navigateToFormPage(
-                      announcementId: announcement.id,
-                      title: announcement['title'],
-                      description: announcement['description'],
+      ),
+      drawer: sidebar(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'List of Announcements',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                InkWell(
+                  onTap: () => _navigateToFormPage(),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.add,
+                        color: Colors.blue,
+                      ),
+                      SizedBox(width: 5),
+                      Text(
+                        'Add New Announcement',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            FutureBuilder<int>(
+              future: _totalAnnouncements,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error fetching total announcements'));
+                } else {
+                  return Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[100],
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete),
-                    color: Colors.white, // Adjust icon color to match the design
-                    onPressed: () => _deleteAnnouncement(announcement.id),
-                  ),
-                ],
+                    child: Text(
+                      'Total Announcements: ${snapshot.data}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[900],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+              },
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: _announcements,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error fetching announcements'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No announcements found'));
+                  } else {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: const [
+                          DataColumn(
+                            label: Expanded(
+                              child: Center(
+                                child: Text('No.'),
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Expanded(
+                              child: Center(
+                                child: Text('Title'),
+                              ),
+                            ),
+                          ),
+                          DataColumn(
+                            label: Expanded(
+                              child: Center(
+                                child: Text('Action'),
+                              ),
+                            ),
+                          ),
+                        ],
+                        rows: snapshot.data!.asMap().entries.map((entry) {
+                          int index = entry.key;
+                          Map<String, dynamic> announcement = entry.value;
+                          return DataRow(cells: [
+                            DataCell(Text((index + 1).toString())),
+                            DataCell(Text(announcement['title'] ?? 'N/A')),
+                            DataCell(
+                              Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        right: BorderSide(
+                                          width: 1.0,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                    child: IconButton(
+                                      icon: Icon(Icons.visibility),
+                                      color: Colors.blue,
+                                      onPressed: () {
+                                        _showAnnouncementDetails(context, announcement);
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        right: BorderSide(
+                                          width: 1.0,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                    child: IconButton(
+                                      icon: Icon(Icons.edit),
+                                      color: Colors.orange,
+                                      onPressed: () => _navigateToFormPage(
+                                        announcementId: announcement['announcementId'],
+                                        title: announcement['title'],
+                                        description: announcement['description'],
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    color: Colors.red,
+                                    onPressed: () => _deleteAnnouncement(announcement['announcementId']),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ]);
+                        }).toList(),
+                        headingRowColor: MaterialStateColor.resolveWith((states) => Colors.grey[200]!),
+                        headingTextStyle: TextStyle(fontWeight: FontWeight.bold),
+                        border: TableBorder.all(width: 1, color: Colors.grey),
+                      ),
+                    );
+                  }
+                },
               ),
-            );
-          },
-        );
-      },
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: AdminBottomNavigation(
+        selectedIndex: _selectedIndex,
+        onItemTapped: _onItemTapped,
+      ),
     );
   }
 }

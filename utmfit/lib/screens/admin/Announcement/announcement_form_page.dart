@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:utmfit/src/constants/colors.dart'; // Import color constants
 
 class AnnouncementFormPage extends StatefulWidget {
   final String? announcementId;
   final String? initialTitle;
   final String? initialDescription;
+  final VoidCallback onSave;
 
-  AnnouncementFormPage({this.announcementId, this.initialTitle, this.initialDescription});
+  AnnouncementFormPage({this.announcementId, this.initialTitle, this.initialDescription, required this.onSave});
 
   @override
   _AnnouncementFormPageState createState() => _AnnouncementFormPageState();
@@ -51,42 +53,106 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: clrAdminBase,
       appBar: AppBar(
+        backgroundColor: clrAdminPrimary,
+        elevation: 0,
         title: Text(widget.announcementId == null ? 'Add Announcement' : 'Edit Announcement'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(labelText: 'Title'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
               ),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Announcement Information',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextFormField(
+                          controller: _titleController,
+                          decoration: InputDecoration(
+                            labelText: 'Title',
+                            labelStyle: TextStyle(color: Colors.black),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a title';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        TextFormField(
+                          controller: _descriptionController,
+                          decoration: InputDecoration(
+                            labelText: 'Description',
+                            labelStyle: TextStyle(color: Colors.black),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a description';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: _saveAnnouncement,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: clrAdmin4,
+                              padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                              textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            child: Text('Save New Announcement'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveAnnouncement,
-                child: Text('Save'),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

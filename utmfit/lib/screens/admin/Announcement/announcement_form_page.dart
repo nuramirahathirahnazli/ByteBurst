@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:utmfit/src/constants/colors.dart'; // Import color constants
+import 'package:utmfit/src/constants/colors.dart'; 
 
 class AnnouncementFormPage extends StatefulWidget {
   final String? announcementId;
@@ -33,8 +33,14 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
   Future<void> _saveAnnouncement() async {
     if (_formKey.currentState!.validate()) {
       if (widget.announcementId == null) {
-        // Add new announcement
-        await announcementsCollection.add({
+        // Fetch the total number of announcements to generate the next ID
+        QuerySnapshot snapshot = await announcementsCollection.get();
+        int total = snapshot.docs.length;
+        String newId = 'A${(total + 1).toString().padLeft(2, '0')}';
+
+        // Add new announcement with generated ID
+        await announcementsCollection.doc(newId).set({
+          'announcementId': newId,
           'title': _titleController.text,
           'description': _descriptionController.text,
         });
@@ -46,6 +52,7 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
         });
       }
 
+      widget.onSave(); // Call the onSave callback
       Navigator.of(context).pop(true); // Pass true to indicate that a save occurred
     }
   }
@@ -143,7 +150,7 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
                               padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                               textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                            child: Text('Save New Announcement'),
+                            child: Text('Save Announcement'),
                           ),
                         ),
                       ],

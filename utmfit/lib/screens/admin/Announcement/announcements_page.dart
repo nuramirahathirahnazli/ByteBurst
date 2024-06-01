@@ -79,6 +79,33 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     _fetchData();
   }
 
+  void _confirmDelete(BuildContext context, String announcementId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Are you sure?'),
+        content: Text('Do you really want to delete this announcement? This process cannot be undone.'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Keep Announcement'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Delete Permanently'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              _deleteAnnouncement(announcementId);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
   void _showAnnouncementDetails(BuildContext context, Map<String, dynamic> announcementDetails) {
     showDialog(
       context: context,
@@ -284,7 +311,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                                   IconButton(
                                     icon: Icon(Icons.delete),
                                     color: Colors.red,
-                                    onPressed: () => _deleteAnnouncement(announcement['announcementId']),
+                                    onPressed: () => _confirmDelete(context, announcement['announcementId']),
                                   ),
                                 ],
                               ),
@@ -310,3 +337,6 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     );
   }
 }
+
+
+

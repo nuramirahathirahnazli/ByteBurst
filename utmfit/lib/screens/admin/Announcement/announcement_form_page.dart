@@ -46,7 +46,7 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
         });
       }
 
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true); // Pass true to indicate that a save occurred
     }
   }
 

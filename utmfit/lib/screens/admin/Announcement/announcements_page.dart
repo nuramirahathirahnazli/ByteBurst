@@ -57,17 +57,21 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     });
   }
 
-  void _navigateToFormPage({String? announcementId, String? title, String? description}) {
-    Navigator.of(context).push(
+  Future<void> _navigateToFormPage({String? announcementId, String? title, String? description}) async {
+    final result = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => AnnouncementFormPage(
           announcementId: announcementId,
           initialTitle: title,
           initialDescription: description,
-          onSave: _fetchData,
+          onSave: _fetchData, // Pass the callback function
         ),
       ),
     );
+
+    if (result == true) {
+      _fetchData();
+    }
   }
 
   void _deleteAnnouncement(String announcementId) async {

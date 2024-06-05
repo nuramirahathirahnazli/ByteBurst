@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:utmfit/screens/admin/Auth/signin_admin.dart';
@@ -67,8 +69,31 @@ class loginScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => AdminLoginPage()));
+                              },
+                              child: Text(
+                                'Admin Login',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 80, left: 40, right: 40),
+                      padding: const EdgeInsets.only(top: 50, left: 40, right: 40),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -78,7 +103,6 @@ class loginScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 20),
                           Text('User Sign In', style: TextStyle(fontSize: 34, fontWeight: FontWeight.bold, color: Colors.black)),
-                          SizedBox(height: 8),
                           SizedBox(height: 30),
                           TextField(
                             controller: emailController,
@@ -133,13 +157,6 @@ class loginScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 20),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => AdminLoginPage()));
-                            },
-                            child: Text('Admin Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black)),
-                          ),
-                          SizedBox(height: 20),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -150,6 +167,7 @@ class loginScreen extends StatelessWidget {
                               ),
                             ],
                           ),
+                          SizedBox(height: 80),
                         ],
                       ),
                     ),

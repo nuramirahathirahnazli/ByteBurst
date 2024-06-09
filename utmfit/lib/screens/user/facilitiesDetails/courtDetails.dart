@@ -504,7 +504,7 @@ class _BadmintonPageState extends State<BadmintonPage> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          '$_numberOfCourts', // Display the number of courts fetched from Firestore
+                          '3', // Display the number of courts fetched from Firestore
                           style: TextStyle(
                             fontSize: 18,
                             color: Colors.black54,

@@ -1,5 +1,3 @@
-// ignore_for_file: unused_field
-
 import 'package:flutter/material.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
@@ -13,50 +11,52 @@ class BookingService {
       FirebaseFirestore.instance.collection('bookingform');
 
   Future<void> addBooking({
-  required String userId,
-  required String game,
-  required int players,
-  required String date,
-  required String court,
-  required String time,
-  String status = 'Confirmed',
-}) async {
-  try {
-    bool isAvailable = await checkCourtAvailability(date, court, time);
-    if (!isAvailable) {
-      throw Exception('Court is not available at the selected date and time.');
+    required String userId,
+    required String game,
+    required int players,
+    required String date,
+    required String court,
+    required String time,
+    String status = 'Confirmed',
+  }) async {
+    try {
+      bool isAvailable = await checkCourtAvailability(date, court, time);
+      if (!isAvailable) {
+        throw Exception(
+            'Court is not available at the selected date and time.');
+      }
+
+      // Generate the booking ID
+      int bookingCount = await _getBookingCount();
+      String bookingId = 'B${bookingCount.toString().padLeft(2, '0')}';
+
+      DocumentReference bookingRef = _bookingsCollection.doc(bookingId);
+      await bookingRef.set({
+        'bookingId': bookingId,
+        'userId': userId, // Store the user's display name or email
+        'game': game,
+        'players': players,
+        'date': date,
+        'court': court,
+        'time': time,
+        'createdAt': Timestamp.now(),
+        'status': status,
+      });
+
+      print("Booking added successfully with ID: $bookingId");
+    } catch (error) {
+      print("Failed to add booking: $error");
+      throw error;
     }
-
-    // Generate the booking ID
-    int bookingCount = await _getBookingCount();
-    String bookingId = 'B${bookingCount.toString().padLeft(2, '0')}';
-
-    DocumentReference bookingRef = _bookingsCollection.doc(bookingId);
-    await bookingRef.set({
-      'bookingId': bookingId,
-      'userId': userId, // Store the user's display name or email
-      'game': game,
-      'players': players,
-      'date': date,
-      'court': court,
-      'time': time,
-      'createdAt': Timestamp.now(),
-      'status' : status,
-    });
-
-    print("Booking added successfully with ID: $bookingId");
-  } catch (error) {
-    print("Failed to add booking: $error");
-    throw error;
   }
-}
 
   Future<int> _getBookingCount() async {
     QuerySnapshot snapshot = await _bookingsCollection.get();
     return snapshot.docs.length + 1;
   }
 
-  Future<bool> checkCourtAvailability(String date, String court, String time) async {
+  Future<bool> checkCourtAvailability(
+      String date, String court, String time) async {
     try {
       QuerySnapshot snapshot = await _bookingsCollection
           .where('date', isEqualTo: date)
@@ -156,7 +156,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
   String _selectedCourt = 'Court 1';
   String _selectedTime = '7:00 AM - 8:00 AM'; // Default selected time slot
   String _status = 'Confirmed';
-  
+
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -181,44 +181,45 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
     }
   }
 
-  Future<void> _fetchAvailableTimeSlots() async {
-    String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-    List<String> allTimeSlots = [
-      '9:00 AM - 10:00 AM',
-      '10:00 AM - 11:00 AM',
-      '11:00 AM - 12:00 PM',
-      '12:00 PM - 1:00 PM',
-      '1:00 PM - 2:00 PM',
-      '2:00 PM - 3:00 PM',
-      '3:00 PM - 4:00 PM',
-      '4:00 PM - 5:00 PM',
-      '5:00 PM - 6:00 PM',
-      '6:00 PM - 7:00 PM',
-      '7:00 PM - 8:00 PM',
-      '8:00 PM - 9:00 PM',
-      '9:00 PM - 10:00 PM',
-    ];
+Future<void> _fetchAvailableTimeSlots() async {
+  String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+  List<String> allTimeSlots = [
+    '9:00 AM - 10:00 AM',
+    '10:00 AM - 11:00 AM',
+    '11:00 AM - 12:00 PM',
+    '12:00 PM - 1:00 PM',
+    '1:00 PM - 2:00 PM',
+    '2:00 PM - 3:00 PM',
+    '3:00 PM - 4:00 PM',
+    '4:00 PM - 5:00 PM',
+    '5:00 PM - 6:00 PM',
+    '6:00 PM - 7:00 PM',
+    '7:00 PM - 8:00 PM',
+    '8:00 PM - 9:00 PM',
+    '9:00 PM - 10:00 PM',
+  ];
 
-    List<String> availableTimeSlots = [];
+  List<String> availableTimeSlots = [];
 
-    for (String timeSlot in allTimeSlots) {
-      bool isAvailable = await _bookingService.checkCourtAvailability(
-        formattedDate,
-        _selectedCourt,
-        timeSlot,
-      );
-      if (isAvailable) {
-        availableTimeSlots.add(timeSlot);
-      }
+  for (String timeSlot in allTimeSlots) {
+    bool isAvailable = await _bookingService.checkCourtAvailability(
+      formattedDate,
+      _selectedCourt,
+      timeSlot,
+    );
+    if (isAvailable) {
+      availableTimeSlots.add(timeSlot);
     }
-
-    setState(() {
-      _availableTimeSlots = availableTimeSlots;
-      if (_availableTimeSlots.isNotEmpty && !_availableTimeSlots.contains(_selectedTime)) {
-        _selectedTime = _availableTimeSlots.first;
-      }
-    });
   }
+
+  setState(() {
+    _availableTimeSlots = availableTimeSlots;
+    if (_availableTimeSlots.isNotEmpty && !_availableTimeSlots.contains(_selectedTime)) {
+      _selectedTime = _availableTimeSlots.first;
+    }
+  });
+}
+
 
   void _addBookingToFirestore() {
     final bookingService = BookingService();
@@ -481,7 +482,7 @@ class BookingFormPage4 extends StatelessWidget {
               Text(
                 'Thank you for booking with us. Enjoy your game!',
                 textAlign: TextAlign.center,
-               style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 40),
               ElevatedButton(
@@ -498,12 +499,9 @@ class BookingFormPage4 extends StatelessWidget {
     );
   }
 }
+
 void main() {
   runApp(MaterialApp(
     home: BookingFormPage(),
   ));
 }
-
-
-
-

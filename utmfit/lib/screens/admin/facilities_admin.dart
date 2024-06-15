@@ -1,4 +1,3 @@
-
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
@@ -16,10 +15,22 @@ class FacilitiesAdmin extends StatefulWidget {
 class _FacilitiesAdminState extends State<FacilitiesAdmin> {
   int _selectedIndex = 3;
 
-  final List<Map<String, String>> facilities = [
-    {'number': '1', 'name': 'Squash'},
-    {'number': '2', 'name': 'Badminton'},
-    {'number': '3', 'name': 'Ping Pong'},
+  final List<Map<String, String?>> facilities = [
+    {
+      'number': '1',
+      'name': 'Squash',
+      'location': 'Building A, Floor 2',
+    },
+    {
+      'number': '2',
+      'name': 'Badminton',
+      'location': 'Sports Complex, Hall B',
+    },
+    {
+      'number': '3',
+      'name': 'Ping Pong',
+      'location': 'Community Center, Room C',
+    },
   ];
 
   void _onItemTapped(int index) {
@@ -98,14 +109,17 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
                 columns: const [
                   DataColumn(label: Text('No.')),
                   DataColumn(label: Text('Name Facilities')),
+                  DataColumn(label: Text('Location')),
                 ],
                 dataRowHeight: 60,
                 rows: facilities.asMap().entries.map((entry) {
                   int index = entry.key;
-                  Map<String, String> facility = entry.value;
+                  Map<String, String?> facility = entry.value;
+                  print("Facility: ${facility['name']}, Location: ${facility['location']}"); // Debugging print statement
                   return DataRow(cells: [
                     DataCell(Text((index + 1).toString())),
-                    DataCell(Text(facility['name']!)),
+                    DataCell(Text(facility['name'] ?? 'N/A')),
+                    DataCell(Text(facility['location'] ?? 'N/A')),
                   ]);
                 }).toList(),
               ),
@@ -113,7 +127,7 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
           ],
         ),
       ),
-     bottomNavigationBar: AdminBottomNavigation(
+      bottomNavigationBar: AdminBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ),

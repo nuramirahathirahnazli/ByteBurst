@@ -111,6 +111,19 @@ class _ViewListBookingState extends State<ViewListBooking> {
     });
   }
 
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'confirmed':
+        return Colors.green;
+      case 'completed':
+        return Colors.orange;
+      case 'cancelled':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -222,7 +235,12 @@ class _ViewListBookingState extends State<ViewListBooking> {
                                   DataCell(Text(booking['userId'] ?? 'N/A')),
                                   DataCell(Text(formatDate(booking['date'] ?? 'N/A'))),
                                   DataCell(Text(booking['game'] ?? 'N/A')),
-                                  DataCell(Text(booking['status'] ?? 'N/A')),
+                                  DataCell(Text(
+                                    booking['status'] ?? 'N/A',
+                                    style: TextStyle(
+                                      color: _getStatusColor(booking['status'] ?? ''),
+                                    ),
+                                  )),
                                   DataCell(
                                     IconButton(
                                       icon: Icon(Icons.visibility),

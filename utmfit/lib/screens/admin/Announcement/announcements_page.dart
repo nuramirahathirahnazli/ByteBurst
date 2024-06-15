@@ -55,6 +55,8 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     setState(() {
       _selectedIndex = index;
     });
+    // Navigate to the selected screen
+    navigateToScreen(context, index);
   }
 
   Future<void> _navigateToFormPage({String? announcementId, String? title, String? description}) async {

@@ -40,6 +40,8 @@ class _UsersDisplayState extends State<UsersDisplay> {
     setState(() {
       _selectedIndex = index;
     });
+    // Navigate to the selected screen
+    navigateToScreen(context, index);
   }
 
   @override

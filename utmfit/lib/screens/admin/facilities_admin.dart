@@ -26,6 +26,8 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
     setState(() {
       _selectedIndex = index;
     });
+    // Navigate to the selected screen
+    navigateToScreen(context, index);
   }
 
   @override

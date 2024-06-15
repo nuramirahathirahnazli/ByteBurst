@@ -51,6 +51,8 @@ class _ViewListBookingState extends State<ViewListBooking> {
     setState(() {
       _selectedIndex = index;
     });
+    // Navigate to the selected screen
+    navigateToScreen(context, index);
   }
 
   String formatDate(String date) {

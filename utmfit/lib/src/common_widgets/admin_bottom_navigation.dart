@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/admin/Announcement/announcements_page.dart';
+import 'package:utmfit/screens/admin/Booking/view_list_booking.dart';
+import 'package:utmfit/screens/admin/dashboard_admin.dart';
+import 'package:utmfit/screens/admin/facilities_admin.dart';
+import 'package:utmfit/screens/admin/userlist_admin.dart';
 import 'package:utmfit/src/constants/colors.dart';
+
 
 class AdminBottomNavigation extends StatelessWidget {
   final int selectedIndex;
@@ -56,5 +62,42 @@ class AdminBottomNavigation extends StatelessWidget {
       unselectedItemColor: clrAdminPrimary,
       onTap: onItemTapped,
     );
+  }
+}
+
+void navigateToScreen(BuildContext context, int index) {
+  switch (index) {
+    case 0:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => DashboardAdmin()),
+      );
+      break;
+    case 1:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => UsersDisplay()),
+      );
+      break;
+    case 2:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ViewListBooking()),
+      );
+      break;
+    case 3:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => FacilitiesAdmin()),
+      );
+      break;
+    case 4:
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AnnouncementsPage()),
+      );
+      break;
+    default:
+      break;
   }
 }

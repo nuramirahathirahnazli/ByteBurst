@@ -5,12 +5,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/screens/admin/dashboard_admin.dart';
+import 'package:utmfit/src/constants/colors.dart';
 
-class AdminLoginPage extends StatelessWidget {
-  static final FirebaseAuth _auth = FirebaseAuth.instance;
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+class AdminLoginPage extends StatefulWidget {
   const AdminLoginPage({Key? key}) : super(key: key);
+
+  @override
+  _AdminLoginPageState createState() => _AdminLoginPageState();
+}
+
+class _AdminLoginPageState extends State<AdminLoginPage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  bool _obscureText = true;
 
   Future<void> _signInWithEmailAndPassword(
       BuildContext context, String email, String password) async {
@@ -86,9 +95,6 @@ class AdminLoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController emailController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -147,7 +153,7 @@ class AdminLoginPage extends StatelessWidget {
                     SizedBox(height: 10),
                     TextField(
                       controller: passwordController,
-                      obscureText: true,
+                      obscureText: _obscureText,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.white,
@@ -157,6 +163,17 @@ class AdminLoginPage extends StatelessWidget {
                         labelText: 'Password',
                         labelStyle: TextStyle(
                           color: Colors.grey,
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureText ? Icons.visibility_off : Icons.visibility,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
                         ),
                       ),
                     ),
@@ -168,7 +185,7 @@ class AdminLoginPage extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                        backgroundColor: Color(0xFFECAA00),
+                        backgroundColor: clrAdmin4,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),

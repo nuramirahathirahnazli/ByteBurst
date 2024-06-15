@@ -52,6 +52,7 @@ class loginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+    ValueNotifier<bool> obscureText = ValueNotifier<bool>(true);
 
     return Scaffold(
       body: LayoutBuilder(
@@ -90,7 +91,69 @@ class loginScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+                        TextField(
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            suffixIcon: Icon(
+                              Icons.check,
+                              color: Colors.grey,
+                            ),
+                            labelText: 'Email',
+                            labelStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 117, 117, 115),
+                            ),
+                          ),
+                        ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: obscureText,
+                          builder: (context, value, child) {
+                            return TextField(
+                              controller: passwordController,
+                              obscureText: value,
+                              decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    value ? Icons.visibility_off : Icons.visibility,
+                                    color: Colors.grey,
+                                  ),
+                                  onPressed: () {
+                                    obscureText.value = !obscureText.value;
+                                  },
+                                ),
+                                labelText: 'Password',
+                                labelStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 117, 117, 115),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          // Navigate to the Forgot Password screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ForgotPassWidget()),
+                          );
+                        },
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                            color: Color(0xff281537),
+                          ),
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 50, left: 40, right: 40),

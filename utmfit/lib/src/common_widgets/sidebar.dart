@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:utmfit/screens/admin/Booking/view_list_booking.dart';
 import 'package:utmfit/screens/admin/dashboard_admin.dart';
+import 'package:utmfit/screens/admin/facilities_admin.dart';
+import 'package:utmfit/screens/admin/userlist_admin.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/screens/admin/Announcement/announcements_page.dart';
@@ -57,7 +59,7 @@ Future<void> _signOut(BuildContext context) async {
             selected: selectedIndex == 1,
             onTap: () {
               onItemTapped(1);
-              // Add your desired navigation here
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UsersDisplay()));
             },
           ),
           ListTile(
@@ -75,7 +77,7 @@ Future<void> _signOut(BuildContext context) async {
             selected: selectedIndex == 3,
             onTap: () {
               onItemTapped(3);
-              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BookingFormPage()));
+               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => FacilitiesAdmin()));
             },
           ),
           ListTile(

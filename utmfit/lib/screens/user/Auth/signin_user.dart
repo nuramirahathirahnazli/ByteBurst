@@ -52,6 +52,7 @@ class loginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
+    ValueNotifier<bool> obscureText = ValueNotifier<bool>(true);
 
     return Scaffold(
       appBar: AppBar(
@@ -126,21 +127,31 @@ class loginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        suffixIcon: Icon(
-                          Icons.visibility_off,
-                          color: Colors.grey,
+                    ValueListenableBuilder<bool>(
+                    valueListenable: obscureText,
+                    builder: (context, value, child) {
+                      return TextField(
+                        controller: passwordController,
+                        obscureText: value,
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              value ? Icons.visibility_off : Icons.visibility,
+                              color: Colors.grey,
+                            ),
+                            onPressed: () {
+                              obscureText.value = !obscureText.value;
+                            },
+                          ),
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 117, 117, 115),
+                          ),
                         ),
-                        labelText: 'Password',
-                        labelStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 117, 117, 115),
-                        ),
-                      ),
-                    ),
+                      );
+                    },
+                  ),
                     SizedBox(
                       height: 20,
                     ),

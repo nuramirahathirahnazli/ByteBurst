@@ -2,48 +2,48 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:utmfit/screens/admin/Auth/signin_admin.dart';
-import 'package:utmfit/screens/user/dashboard_user.dart';
+import 'package:utmfit/screens/admin/dashboard_admin.dart';
 import 'package:utmfit/screens/user/Auth/signup_user.dart';
 import 'package:utmfit/screens/authentication/forgotpassword.dart';
 
 class loginScreen extends StatelessWidget {
   // Firebase Authentication instance
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  // Firestore instance
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   const loginScreen({Key? key}) : super(key: key);
 
-  Future<void> _signInWithEmailAndPassword(BuildContext context, String email, String password) async {
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Email and password cannot be empty.")),
-      );
-      return;
-    }
-
+  Future<void> _signInWithEmailAndPassword(
+      BuildContext context, String email, String password) async {
     try {
+      // Sign in user with email and password
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => dashboardUser()),
-      );
-    } on FirebaseAuthException catch (e) {
-      String message = "An error occurred. Please try again.";
-      if (e.code == 'user-not-found') {
-        message = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        message = 'Wrong password provided for that user.';
-      } else if (e.code == 'invalid-email') {
-        message = 'The email address is not valid.';
-      }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      // Check if the signed-in user is an admin
+      DocumentSnapshot adminSnapshot = await _firestore.collection('admins').doc(email).get();
+      if (adminSnapshot.exists) {
+        // Navigate to admin dashboard
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DashboardAdmin()), 
+        );
+      } else {
+        // Show error message for non-admin users
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("This is for admin sign-in only.")),
+        );
+      }
     } catch (e) {
-      print(e); // For debugging purposes
+      // Handle login errors
+      print("Error signing in: $e");
+      // Show error dialog or toast message to the user
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to sign in. Please try again.")),
+        SnackBar(
+          content: Text("Failed to sign in. Please check your credentials."),
+        ),
       );
     }
   }
@@ -91,69 +91,7 @@ class loginScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        TextField(
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            suffixIcon: Icon(
-                              Icons.check,
-                              color: Colors.grey,
-                            ),
-                            labelText: 'Email',
-                            labelStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 117, 117, 115),
-                            ),
-                          ),
-                        ),
-                        ValueListenableBuilder<bool>(
-                          valueListenable: obscureText,
-                          builder: (context, value, child) {
-                            return TextField(
-                              controller: passwordController,
-                              obscureText: value,
-                              decoration: InputDecoration(
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    value ? Icons.visibility_off : Icons.visibility,
-                                    color: Colors.grey,
-                                  ),
-                                  onPressed: () {
-                                    obscureText.value = !obscureText.value;
-                                  },
-                                ),
-                                labelText: 'Password',
-                                labelStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 117, 117, 115),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
                       ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          // Navigate to the Forgot Password screen
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ForgotPassWidget()),
-                          );
-                        },
-                        child: Text(
-                          'Forgot Password?',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                            color: Color(0xff281537),
-                          ),
-                        ),
-                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 50, left: 40, right: 40),
@@ -179,17 +117,31 @@ class loginScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 20),
-                          TextField(
-                            controller: passwordController,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              labelStyle: TextStyle(color: Colors.black),
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                              prefixIcon: Icon(Icons.lock, color: Colors.grey),
-                            ),
+                          ValueListenableBuilder<bool>(
+                            valueListenable: obscureText,
+                            builder: (context, value, child) {
+                              return TextField(
+                                controller: passwordController,
+                                obscureText: value,
+                                decoration: InputDecoration(
+                                  labelText: 'Password',
+                                  labelStyle: TextStyle(color: Colors.black),
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                                  prefixIcon: Icon(Icons.lock, color: Colors.grey),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      value ? Icons.visibility : Icons.visibility_off,
+                                      color: Colors.grey,
+                                    ),
+                                    onPressed: () {
+                                      obscureText.value = !obscureText.value;
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                           SizedBox(height: 20),
                           Row(

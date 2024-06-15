@@ -16,6 +16,8 @@ class _ViewListBookingState extends State<ViewListBooking> {
   late Future<List<Map<String, dynamic>>> _bookings;
   late Future<int> _totalBookings;
   int _selectedIndex = 2;
+  int _currentPage = 0;
+  final int _itemsPerPage = 7;
 
   @override
   void initState() {
@@ -95,6 +97,18 @@ class _ViewListBookingState extends State<ViewListBooking> {
         );
       },
     );
+  }
+
+  void _nextPage() {
+    setState(() {
+      _currentPage++;
+    });
+  }
+
+  void _previousPage() {
+    setState(() {
+      _currentPage--;
+    });
   }
 
   @override
@@ -180,38 +194,64 @@ class _ViewListBookingState extends State<ViewListBooking> {
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return Center(child: Text('No bookings found'));
                   } else {
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const [
-                          DataColumn(label: Text('No.')),
-                          DataColumn(label: Text('Name')),
-                          DataColumn(label: Text('Date')),
-                          DataColumn(label: Text('Type')),
-                          DataColumn(label: Text('Status')),
-                          DataColumn(label: Text('Action')),
-                        ],
-                        rows: snapshot.data!.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          Map<String, dynamic> booking = entry.value;
-                          return DataRow(cells: [
-                            DataCell(Text((index + 1).toString())),
-                            DataCell(Text(booking['userId'] ?? 'N/A')),
-                            DataCell(Text(formatDate(booking['date'] ?? 'N/A'))),
-                            DataCell(Text(booking['game'] ?? 'N/A')),
-                            DataCell(Text(booking['status'] ?? 'N/A')),
-                            DataCell(
-                              IconButton(
-                                icon: Icon(Icons.visibility),
-                                color: Colors.blue,
-                                onPressed: () {
-                                  _showBookingDetails(context, booking);
-                                },
-                              ),
+                    int startIndex = _currentPage * _itemsPerPage;
+                    int endIndex = startIndex + _itemsPerPage;
+                    List<Map<String, dynamic>> paginatedBookings = snapshot.data!.sublist(
+                      startIndex,
+                      endIndex > snapshot.data!.length ? snapshot.data!.length : endIndex,
+                    );
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTable(
+                              columns: const [
+                                DataColumn(label: Text('No.')),
+                                DataColumn(label: Text('Name')),
+                                DataColumn(label: Text('Date')),
+                                DataColumn(label: Text('Type')),
+                                DataColumn(label: Text('Status')),
+                                DataColumn(label: Text('Action')),
+                              ],
+                              rows: paginatedBookings.asMap().entries.map((entry) {
+                                int index = entry.key;
+                                Map<String, dynamic> booking = entry.value;
+                                return DataRow(cells: [
+                                  DataCell(Text((startIndex + index + 1).toString())),
+                                  DataCell(Text(booking['userId'] ?? 'N/A')),
+                                  DataCell(Text(formatDate(booking['date'] ?? 'N/A'))),
+                                  DataCell(Text(booking['game'] ?? 'N/A')),
+                                  DataCell(Text(booking['status'] ?? 'N/A')),
+                                  DataCell(
+                                    IconButton(
+                                      icon: Icon(Icons.visibility),
+                                      color: Colors.blue,
+                                      onPressed: () {
+                                        _showBookingDetails(context, booking);
+                                      },
+                                    ),
+                                  ),
+                                ]);
+                              }).toList(),
                             ),
-                          ]);
-                        }).toList(),
-                      ),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: _currentPage > 0 ? _previousPage : null,
+                              child: Text('Previous'),
+                            ),
+                            Text('Page ${_currentPage + 1}'),
+                            TextButton(
+                              onPressed: endIndex < snapshot.data!.length ? _nextPage : null,
+                              child: Text('Next'),
+                            ),
+                          ],
+                        ),
+                      ],
                     );
                   }
                 },

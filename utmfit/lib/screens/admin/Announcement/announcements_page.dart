@@ -82,31 +82,31 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
   }
 
   void _confirmDelete(BuildContext context, String announcementId) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Are you sure?'),
-        content: Text('Do you really want to delete this announcement? This process cannot be undone.'),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Keep Announcement'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text('Delete Permanently'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _deleteAnnouncement(announcementId);
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Are you sure?'),
+          content: Text('Do you really want to delete this announcement? This process cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Keep Announcement'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete Permanently'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteAnnouncement(announcementId);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _showAnnouncementDetails(BuildContext context, Map<String, dynamic> announcementDetails) {
     showDialog(
@@ -180,20 +180,18 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                     color: Colors.black,
                   ),
                 ),
-                InkWell(
-                  onTap: () => _navigateToFormPage(),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.add,
-                        color: Colors.blue,
-                      ),
-                      SizedBox(width: 5),
-                      Text(
-                        'Add New Announcement',
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    ],
+                Expanded( // Wrap the Row in an Expanded widget
+                  child: InkWell(
+                    onTap: () => _navigateToFormPage(),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.add,
+                          color: Colors.blue,
+                        ),
+                        SizedBox(width: 5),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -244,25 +242,13 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                       child: DataTable(
                         columns: const [
                           DataColumn(
-                            label: Expanded(
-                              child: Center(
-                                child: Text('No.'),
-                              ),
-                            ),
+                            label: Text('No.'),
                           ),
                           DataColumn(
-                            label: Expanded(
-                              child: Center(
-                                child: Text('Title'),
-                              ),
-                            ),
+                            label: Text('Title'),
                           ),
                           DataColumn(
-                            label: Expanded(
-                              child: Center(
-                                child: Text('Action'),
-                              ),
-                            ),
+                            label: Text('Action'),
                           ),
                         ],
                         rows: snapshot.data!.asMap().entries.map((entry) {
@@ -320,9 +306,6 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                             ),
                           ]);
                         }).toList(),
-                        headingRowColor: MaterialStateColor.resolveWith((states) => Colors.grey[200]!),
-                        headingTextStyle: TextStyle(fontWeight: FontWeight.bold),
-                        border: TableBorder.all(width: 1, color: Colors.grey),
                       ),
                     );
                   }
@@ -335,10 +318,8 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
       bottomNavigationBar: AdminBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
+        
       ),
     );
   }
 }
-
-
-

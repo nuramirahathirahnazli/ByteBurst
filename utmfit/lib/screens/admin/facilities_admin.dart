@@ -108,7 +108,7 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
                 columnSpacing: 20,
                 columns: const [
                   DataColumn(label: Text('No.')),
-                  DataColumn(label: Text('Name Facilities')),
+                  DataColumn(label: Text('Name ')),
                   DataColumn(label: Text('Location')),
                 ],
                 dataRowHeight: 60,

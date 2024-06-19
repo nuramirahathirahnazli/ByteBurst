@@ -7,6 +7,9 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class BookingService {
   final CollectionReference _bookingsCollection =
@@ -136,7 +139,8 @@ class _BookingFormPageState extends State<BookingFormPage> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
+      bottomNavigationBar:
+          CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
     );
   }
 }
@@ -183,45 +187,45 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
     }
   }
 
-Future<void> _fetchAvailableTimeSlots() async {
-  String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-  List<String> allTimeSlots = [
-    '9:00 AM - 10:00 AM',
-    '10:00 AM - 11:00 AM',
-    '11:00 AM - 12:00 PM',
-    '12:00 PM - 1:00 PM',
-    '1:00 PM - 2:00 PM',
-    '2:00 PM - 3:00 PM',
-    '3:00 PM - 4:00 PM',
-    '4:00 PM - 5:00 PM',
-    '5:00 PM - 6:00 PM',
-    '6:00 PM - 7:00 PM',
-    '7:00 PM - 8:00 PM',
-    '8:00 PM - 9:00 PM',
-    '9:00 PM - 10:00 PM',
-  ];
+  Future<void> _fetchAvailableTimeSlots() async {
+    String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
+    List<String> allTimeSlots = [
+      '9:00 AM - 10:00 AM',
+      '10:00 AM - 11:00 AM',
+      '11:00 AM - 12:00 PM',
+      '12:00 PM - 1:00 PM',
+      '1:00 PM - 2:00 PM',
+      '2:00 PM - 3:00 PM',
+      '3:00 PM - 4:00 PM',
+      '4:00 PM - 5:00 PM',
+      '5:00 PM - 6:00 PM',
+      '6:00 PM - 7:00 PM',
+      '7:00 PM - 8:00 PM',
+      '8:00 PM - 9:00 PM',
+      '9:00 PM - 10:00 PM',
+    ];
 
-  List<String> availableTimeSlots = [];
+    List<String> availableTimeSlots = [];
 
-  for (String timeSlot in allTimeSlots) {
-    bool isAvailable = await _bookingService.checkCourtAvailability(
-      formattedDate,
-      _selectedCourt,
-      timeSlot,
-    );
-    if (isAvailable) {
-      availableTimeSlots.add(timeSlot);
+    for (String timeSlot in allTimeSlots) {
+      bool isAvailable = await _bookingService.checkCourtAvailability(
+        formattedDate,
+        _selectedCourt,
+        timeSlot,
+      );
+      if (isAvailable) {
+        availableTimeSlots.add(timeSlot);
+      }
     }
+
+    setState(() {
+      _availableTimeSlots = availableTimeSlots;
+      if (_availableTimeSlots.isNotEmpty &&
+          !_availableTimeSlots.contains(_selectedTime)) {
+        _selectedTime = _availableTimeSlots.first;
+      }
+    });
   }
-
-  setState(() {
-    _availableTimeSlots = availableTimeSlots;
-    if (_availableTimeSlots.isNotEmpty && !_availableTimeSlots.contains(_selectedTime)) {
-      _selectedTime = _availableTimeSlots.first;
-    }
-  });
-}
-
 
   void _addBookingToFirestore() {
     final bookingService = BookingService();
@@ -361,8 +365,25 @@ Future<void> _fetchAvailableTimeSlots() async {
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
+      bottomNavigationBar:
+          CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
     );
+  }
+}
+
+Future<Map<String, dynamic>> createPaymentIntent(String userId) async {
+  final response = await http.post(
+    Uri.parse(
+        'https://us-central1-byteburst-d14d3.cloudfunctions.net/createPaymentIntent'), // Replace with your Cloud Function URL
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({'userId': userId}),
+  );
+
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    print('Error creating payment intent: ${response.body}');
+    throw Exception('Failed to create payment intent');
   }
 }
 
@@ -376,6 +397,48 @@ class BookingFormPage3 extends StatefulWidget {
 class _BookingFormPage3State extends State<BookingFormPage3> {
   int _page = 0;
   bool _acknowledged = false;
+  bool _agreedToPay = false;
+
+  Future<void> initPaymentSheet(BuildContext context,
+      {required String userId}) async {
+    try {
+      // Call your Firebase Cloud Function to create a payment intent
+      final paymentData = await createPaymentIntent(userId);
+
+      // Initialize the payment sheet
+      await stripe.Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: stripe.SetupPaymentSheetParameters(
+          paymentIntentClientSecret: paymentData['paymentIntent'],
+          merchantDisplayName: 'Booking Form',
+          style: ThemeMode.light,
+        ),
+      );
+
+      await stripe.Stripe.instance.presentPaymentSheet();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Payment completed!')),
+      );
+
+      // Navigate to the next step after payment is completed
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => BookingFormPage4()),
+      );
+    } catch (e) {
+      if (e is stripe.StripeException) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error from Stripe: ${e.error.localizedMessage}'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -425,28 +488,54 @@ class _BookingFormPage3State extends State<BookingFormPage3> {
                         ),
                       ],
                     ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _agreedToPay,
+                          onChanged: (value) {
+                            setState(() {
+                              _agreedToPay = value!;
+                            });
+                          },
+                        ),
+                        Flexible(
+                          child: Text(
+                            'I agree to pay RM5 to use the facilities.',
+                            style: TextStyle(fontSize: 16),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 10, // Adjust maxLines as needed
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
             ),
             SizedBox(height: 20),
-            // Button to proceed if acknowledged
+            // Button to proceed if both acknowledged and agreed to pay
             ElevatedButton(
-              onPressed: _acknowledged
-                  ? () {
-                      // Proceed to the next step
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BookingFormPage4()),
-                      );
+              onPressed: (_acknowledged && _agreedToPay)
+                  ? () async {
+                      User? user = FirebaseAuth.instance.currentUser;
+                      if (user != null) {
+                        String userId = user.uid; // Get the current user's ID
+                        await initPaymentSheet(context, userId: userId);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('User not logged in')),
+                        );
+                      }
                     }
-                  : null, // Disable button if not acknowledged
+                  : null, // Disable button if not acknowledged and agreed to pay
               child: Text('Proceed'),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
+      bottomNavigationBar:
+          CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
     );
   }
 }

@@ -99,7 +99,7 @@ class loginScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Image.asset(
-                            'assets/logo/UTMfitLogo.png',
+                            'assets/logo/UTMFitLogo.png',
                             height: 200, // Adjust the height as needed
                           ),
                           SizedBox(height: 20),

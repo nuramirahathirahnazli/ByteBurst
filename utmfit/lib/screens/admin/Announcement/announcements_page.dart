@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/common_widgets/sidebar.dart';
 import 'package:utmfit/src/constants/colors.dart'; // Import color constants
 import 'package:utmfit/src/common_widgets/admin_bottom_navigation.dart'; // Import the new widget
@@ -55,6 +57,8 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     setState(() {
       _selectedIndex = index;
     });
+    // Navigate to the selected screen
+    navigateToScreen(context, index);
   }
 
   Future<void> _navigateToFormPage({String? announcementId, String? title, String? description}) async {
@@ -80,31 +84,31 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
   }
 
   void _confirmDelete(BuildContext context, String announcementId) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Are you sure?'),
-        content: Text('Do you really want to delete this announcement? This process cannot be undone.'),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Keep Announcement'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text('Delete Permanently'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _deleteAnnouncement(announcementId);
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Are you sure?'),
+          content: Text('Do you really want to delete this announcement? This process cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Keep Announcement'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete Permanently'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _deleteAnnouncement(announcementId);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _showAnnouncementDetails(BuildContext context, Map<String, dynamic> announcementDetails) {
     showDialog(
@@ -133,6 +137,18 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     );
   }
 
+  void _signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => loginScreen()), // Navigate to LoginScreen widget directly
+      );
+    } catch (e) {
+      print('Error signing out: $e');
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,9 +162,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
             Text('Hi, Admin', style: TextStyle(color: Colors.white)),
             Spacer(),
             TextButton(
-              onPressed: () {
-                // Add sign out functionality here
-              },
+              onPressed: _signOut,
               child: Text(
                 'Sign Out',
                 style: TextStyle(color: Colors.white),
@@ -178,6 +192,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                     color: Colors.black,
                   ),
                 ),
+                Spacer(),
                 InkWell(
                   onTap: () => _navigateToFormPage(),
                   child: Row(
@@ -187,10 +202,6 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                         color: Colors.blue,
                       ),
                       SizedBox(width: 5),
-                      Text(
-                        'Add New Announcement',
-                        style: TextStyle(color: Colors.blue),
-                      ),
                     ],
                   ),
                 ),
@@ -242,25 +253,13 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                       child: DataTable(
                         columns: const [
                           DataColumn(
-                            label: Expanded(
-                              child: Center(
-                                child: Text('No.'),
-                              ),
-                            ),
+                            label: Text('No.'),
                           ),
                           DataColumn(
-                            label: Expanded(
-                              child: Center(
-                                child: Text('Title'),
-                              ),
-                            ),
+                            label: Text('Title'),
                           ),
                           DataColumn(
-                            label: Expanded(
-                              child: Center(
-                                child: Text('Action'),
-                              ),
-                            ),
+                            label: Text('Action'),
                           ),
                         ],
                         rows: snapshot.data!.asMap().entries.map((entry) {
@@ -318,9 +317,6 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
                             ),
                           ]);
                         }).toList(),
-                        headingRowColor: MaterialStateColor.resolveWith((states) => Colors.grey[200]!),
-                        headingTextStyle: TextStyle(fontWeight: FontWeight.bold),
-                        border: TableBorder.all(width: 1, color: Colors.grey),
                       ),
                     );
                   }
@@ -333,10 +329,8 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
       bottomNavigationBar: AdminBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
+        
       ),
     );
   }
 }
-
-
-

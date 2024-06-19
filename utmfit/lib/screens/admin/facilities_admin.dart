@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/common_widgets/sidebar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/src/common_widgets/admin_bottom_navigation.dart'; // Import the new widget
@@ -14,16 +17,42 @@ class FacilitiesAdmin extends StatefulWidget {
 class _FacilitiesAdminState extends State<FacilitiesAdmin> {
   int _selectedIndex = 3;
 
-  final List<Map<String, String>> facilities = [
-    {'number': '1', 'name': 'Squash'},
-    {'number': '2', 'name': 'Badminton'},
-    {'number': '3', 'name': 'Ping Pong'},
+  final List<Map<String, String?>> facilities = [
+    {
+      'number': '1',
+      'name': 'Squash',
+      'location': 'Building A, Floor 2',
+    },
+    {
+      'number': '2',
+      'name': 'Badminton',
+      'location': 'Sports Complex, Hall B',
+    },
+    {
+      'number': '3',
+      'name': 'Ping Pong',
+      'location': 'Community Center, Room C',
+    },
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
+    // Navigate to the selected screen
+    navigateToScreen(context, index);
+  }
+
+  void _signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => loginScreen()), // Navigate to LoginScreen widget directly
+      );
+    } catch (e) {
+      print('Error signing out: $e');
+    }
   }
 
   @override
@@ -39,9 +68,7 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
             Text('Hi, Admin', style: TextStyle(color: Colors.white)),
             Spacer(),
             TextButton(
-              onPressed: () {
-                // Add sign out functionality here
-              },
+              onPressed: _signOut,
               child: Text(
                 'Sign Out',
                 style: TextStyle(color: Colors.white),
@@ -93,15 +120,18 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
                 columnSpacing: 20,
                 columns: const [
                   DataColumn(label: Text('No.')),
-                  DataColumn(label: Text('Name Facilities')),
+                  DataColumn(label: Text('Name ')),
+                  DataColumn(label: Text('Location')),
                 ],
                 dataRowHeight: 60,
                 rows: facilities.asMap().entries.map((entry) {
                   int index = entry.key;
-                  Map<String, String> facility = entry.value;
+                  Map<String, String?> facility = entry.value;
+                  print("Facility: ${facility['name']}, Location: ${facility['location']}"); // Debugging print statement
                   return DataRow(cells: [
                     DataCell(Text((index + 1).toString())),
-                    DataCell(Text(facility['name']!)),
+                    DataCell(Text(facility['name'] ?? 'N/A')),
+                    DataCell(Text(facility['location'] ?? 'N/A')),
                   ]);
                 }).toList(),
               ),
@@ -109,7 +139,7 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
           ],
         ),
       ),
-     bottomNavigationBar: AdminBottomNavigation(
+      bottomNavigationBar: AdminBottomNavigation(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ),

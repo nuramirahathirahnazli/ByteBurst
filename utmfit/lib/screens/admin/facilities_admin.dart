@@ -1,6 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/common_widgets/sidebar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/src/common_widgets/admin_bottom_navigation.dart'; // Import the new widget
@@ -41,6 +43,18 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
     navigateToScreen(context, index);
   }
 
+  void _signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => loginScreen()), // Navigate to LoginScreen widget directly
+      );
+    } catch (e) {
+      print('Error signing out: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,9 +68,7 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
             Text('Hi, Admin', style: TextStyle(color: Colors.white)),
             Spacer(),
             TextButton(
-              onPressed: () {
-                // Add sign out functionality here
-              },
+              onPressed: _signOut,
               child: Text(
                 'Sign Out',
                 style: TextStyle(color: Colors.white),

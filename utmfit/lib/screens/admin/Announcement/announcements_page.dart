@@ -137,17 +137,17 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     );
   }
 
-//   void _signOut() async {
-//   try {
-//     await FirebaseAuth.instance.signOut();
-//     Navigator.pushReplacement(
-//       context,
-//       MaterialPageRoute(builder: (context) => loginScreen()), // Navigate to LoginScreen widget directly
-//     );
-//   } catch (e) {
-//     print('Error signing out: $e');
-//   }
-// }
+  void _signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => loginScreen()), // Navigate to LoginScreen widget directly
+      );
+    } catch (e) {
+      print('Error signing out: $e');
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -162,7 +162,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
             Text('Hi, Admin', style: TextStyle(color: Colors.white)),
             Spacer(),
             TextButton(
-              onPressed: () {},//_signOut,
+              onPressed: _signOut,
               child: Text(
                 'Sign Out',
                 style: TextStyle(color: Colors.white),

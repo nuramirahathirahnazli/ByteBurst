@@ -1,5 +1,3 @@
-// ignore_for_file: unused_field
-
 import 'package:flutter/material.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
@@ -12,8 +10,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class BookingService {
-  final CollectionReference _bookingsCollection =
-      FirebaseFirestore.instance.collection('bookingform');
+  final CollectionReference _bookingsCollection = FirebaseFirestore.instance.collection('bookingform');
 
   Future<void> addBooking({
     required String userId,
@@ -27,8 +24,7 @@ class BookingService {
     try {
       bool isAvailable = await checkCourtAvailability(date, court, time);
       if (!isAvailable) {
-        throw Exception(
-            'Court is not available at the selected date and time.');
+        throw Exception('Court is not available at the selected date and time.');
       }
 
       // Generate the booking ID
@@ -60,8 +56,7 @@ class BookingService {
     return snapshot.docs.length + 1;
   }
 
-  Future<bool> checkCourtAvailability(
-      String date, String court, String time) async {
+  Future<bool> checkCourtAvailability(String date, String court, String time) async {
     try {
       QuerySnapshot snapshot = await _bookingsCollection
           .where('date', isEqualTo: date)
@@ -74,6 +69,35 @@ class BookingService {
       print("Failed to check court availability: $error");
       throw error;
     }
+  }
+
+  Future<List<String>> getAvailableTimeSlots(String date, String court) async {
+    List<String> allTimeSlots = [
+      '9:00 AM - 10:00 AM',
+      '10:00 AM - 11:00 AM',
+      '11:00 AM - 12:00 PM',
+      '12:00 PM - 1:00 PM',
+      '1:00 PM - 2:00 PM',
+      '2:00 PM - 3:00 PM',
+      '3:00 PM - 4:00 PM',
+      '4:00 PM - 5:00 PM',
+      '5:00 PM - 6:00 PM',
+      '6:00 PM - 7:00 PM',
+      '7:00 PM - 8:00 PM',
+      '8:00 PM - 9:00 PM',
+      '9:00 PM - 10:00 PM',
+    ];
+
+    QuerySnapshot snapshot = await _bookingsCollection
+        .where('date', isEqualTo: date)
+        .where('court', isEqualTo: court)
+        .get();
+
+    List<String> bookedTimeSlots = snapshot.docs.map((doc) => doc['time'] as String).toList();
+
+    List<String> availableTimeSlots = allTimeSlots.where((timeSlot) => !bookedTimeSlots.contains(timeSlot)).toList();
+
+    return availableTimeSlots;
   }
 }
 
@@ -139,8 +163,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
           ],
         ),
       ),
-      bottomNavigationBar:
-          CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
+      bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 1, onItemTapped: (_) {}),
     );
   }
 }
@@ -182,46 +205,18 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       setState(() {
-        _userId = user.email ?? ''; // Set _userId to display name or email
+        _userId = user.email ?? '';
       });
     }
   }
 
   Future<void> _fetchAvailableTimeSlots() async {
     String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
-    List<String> allTimeSlots = [
-      '9:00 AM - 10:00 AM',
-      '10:00 AM - 11:00 AM',
-      '11:00 AM - 12:00 PM',
-      '12:00 PM - 1:00 PM',
-      '1:00 PM - 2:00 PM',
-      '2:00 PM - 3:00 PM',
-      '3:00 PM - 4:00 PM',
-      '4:00 PM - 5:00 PM',
-      '5:00 PM - 6:00 PM',
-      '6:00 PM - 7:00 PM',
-      '7:00 PM - 8:00 PM',
-      '8:00 PM - 9:00 PM',
-      '9:00 PM - 10:00 PM',
-    ];
-
-    List<String> availableTimeSlots = [];
-
-    for (String timeSlot in allTimeSlots) {
-      bool isAvailable = await _bookingService.checkCourtAvailability(
-        formattedDate,
-        _selectedCourt,
-        timeSlot,
-      );
-      if (isAvailable) {
-        availableTimeSlots.add(timeSlot);
-      }
-    }
+    List<String> availableTimeSlots = await _bookingService.getAvailableTimeSlots(formattedDate, _selectedCourt);
 
     setState(() {
       _availableTimeSlots = availableTimeSlots;
-      if (_availableTimeSlots.isNotEmpty &&
-          !_availableTimeSlots.contains(_selectedTime)) {
+      if (_availableTimeSlots.isNotEmpty && !_availableTimeSlots.contains(_selectedTime)) {
         _selectedTime = _availableTimeSlots.first;
       }
     });
@@ -286,7 +281,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
                   _selectedPlayers = newValue!;
                 });
               },
-              items: <int>[1, 2, 3, 4, 5, 6]
+              items: List<int>.generate(6, (index) => index + 1)
                   .map<DropdownMenuItem<int>>((int value) {
                 return DropdownMenuItem<int>(
                   value: value,
@@ -355,7 +350,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
             ElevatedButton(
               onPressed: () {
                 _addBookingToFirestore();
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => BookingFormPage3()),
                 );

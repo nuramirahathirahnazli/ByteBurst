@@ -548,37 +548,40 @@ class BookingFormPage4 extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.check_circle,
-                color: Colors.green,
-                size: 100,
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Your booking has been confirmed!',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.green,
+                  size: 100,
                 ),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Thank you for booking with us. Enjoy your game!',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () {
-                  // Navigate back to the home or main page
-                  Navigator.popUntil(context, (route) => route.isFirst);
-                },
-                child: Text('Back to Home'),
-              ),
-            ],
+                SizedBox(height: 20),
+                Text(
+                  'Your booking has been confirmed!',
+                   textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Thank you for booking with us. Enjoy your game!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate back to the home or main page
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                  },
+                  child: Text('Back to Home'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

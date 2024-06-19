@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:utmfit/screens/admin/Auth/signin_admin.dart';
-import 'package:utmfit/screens/admin/dashboard_admin.dart';
 import 'package:utmfit/screens/user/Auth/signup_user.dart';
 import 'package:utmfit/screens/authentication/forgotpassword.dart';
+import 'package:utmfit/screens/user/dashboard_user.dart';
 
 class loginScreen extends StatelessWidget {
   // Firebase Authentication instance
@@ -22,18 +22,18 @@ class loginScreen extends StatelessWidget {
       // Sign in user with email and password
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
 
-      // Check if the signed-in user is an admin
-      DocumentSnapshot adminSnapshot = await _firestore.collection('admins').doc(email).get();
+      // Check if the signed-in user is not an admin
+      DocumentSnapshot adminSnapshot = await _firestore.collection('Users').doc(email).get();
       if (adminSnapshot.exists) {
         // Navigate to admin dashboard
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DashboardAdmin()), 
+          MaterialPageRoute(builder: (context) => dashboardUser()), 
         );
       } else {
         // Show error message for non-admin users
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("This is for admin sign-in only.")),
+          SnackBar(content: Text("This is for non-admins sign-in only.")),
         );
       }
     } catch (e) {

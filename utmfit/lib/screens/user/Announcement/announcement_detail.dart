@@ -13,6 +13,7 @@ class AnnouncementDetailPage extends StatelessWidget {
         title: Text('Announcement Detail'),
         backgroundColor:
             Color.fromARGB(255, 255, 231, 172), // Customizing the AppBar color
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

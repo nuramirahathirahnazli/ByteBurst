@@ -27,6 +27,8 @@ class _dashboardUserState extends State<dashboardUser> {
       backgroundColor: clrBase, // Set the entire background screen color
       appBar: AppBar(
         title: Text('UTM FIT'),
+        backgroundColor: clrUserPrimary,
+        automaticallyImplyLeading: false,
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: _page,

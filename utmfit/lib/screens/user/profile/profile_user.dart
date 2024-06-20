@@ -26,6 +26,7 @@ class _ProfileUserState extends State<ProfileUser> {
       backgroundColor: clrBase,
       appBar: AppBar(
         backgroundColor: clrUserPrimary,
+        automaticallyImplyLeading: false,
         title: Text(
           'My Profile',
           style: TextStyle(

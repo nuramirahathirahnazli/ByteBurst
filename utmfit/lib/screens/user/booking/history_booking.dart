@@ -30,6 +30,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
         appBar: AppBar(
           backgroundColor: clrUserPrimary,
           title: const Text('My Bookings'),
+          automaticallyImplyLeading: false,
         ),
         body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection("bookingform").snapshots(),

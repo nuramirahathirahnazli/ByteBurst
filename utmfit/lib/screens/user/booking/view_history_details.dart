@@ -24,6 +24,7 @@ class ViewHistoryDetails extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: clrUserPrimary,
         title: Text('Booking Details'),
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance.collection("bookingform").doc(bookingID).get(),

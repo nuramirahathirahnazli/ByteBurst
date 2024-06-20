@@ -64,6 +64,7 @@ class _UsersDisplayState extends State<UsersDisplay> {
       backgroundColor: clrAdminBase,
       appBar: AppBar(
         backgroundColor: clrAdminPrimary,
+        automaticallyImplyLeading: false,
         elevation: 0,
         title: Row(
           children: [

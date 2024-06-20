@@ -119,6 +119,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       appBar: AppBar(
         title: Text('Booking Form'),
         backgroundColor: clrUserPrimary,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -244,6 +245,7 @@ class _BookingFormPage2State extends State<BookingFormPage2> {
       appBar: AppBar(
         backgroundColor: clrUserPrimary,
         title: Text('Booking Form'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -443,6 +445,7 @@ class _BookingFormPage3State extends State<BookingFormPage3> {
       appBar: AppBar(
         backgroundColor: clrUserPrimary,
         title: Text('Booking Form'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -546,6 +549,7 @@ class BookingFormPage4 extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: clrUserPrimary,
         title: Text('Booking Confirmed'),
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Padding(
@@ -591,8 +595,3 @@ class BookingFormPage4 extends StatelessWidget {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: BookingFormPage(),
-  ));
-}

@@ -22,6 +22,7 @@ class _EditProfileUserState extends State<EditProfileUser> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: clrUserPrimary,
+        automaticallyImplyLeading: false,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

@@ -77,6 +77,7 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
         backgroundColor: clrAdminPrimary,
         elevation: 0,
         title: Text(widget.announcementId == null ? 'Add Announcement' : 'Edit Announcement'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

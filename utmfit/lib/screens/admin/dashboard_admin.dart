@@ -63,6 +63,7 @@ class _DashboardAdminState extends State<DashboardAdmin> {
       backgroundColor: clrAdmin2,
       appBar: AppBar(
         title: Text('Admin UTM FIT'),
+        automaticallyImplyLeading: false,
       ),
       drawer: sidebar(
         selectedIndex: _selectedIndex,

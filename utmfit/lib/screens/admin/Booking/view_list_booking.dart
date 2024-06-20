@@ -151,7 +151,6 @@ Future<int> fetchTotalBookings() async {
       backgroundColor: clrAdminBase,
       appBar: AppBar(
         backgroundColor: clrAdminPrimary,
-        automaticallyImplyLeading: false,
         elevation: 0,
         title: Row(
           children: [

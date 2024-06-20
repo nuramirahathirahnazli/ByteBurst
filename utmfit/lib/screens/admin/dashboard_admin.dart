@@ -58,20 +58,21 @@ class _DashboardAdminState extends State<DashboardAdmin> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: clrAdmin2,
-      appBar: AppBar(
-        title: Text('Admin UTM FIT'),
-        automaticallyImplyLeading: false,
-      ),
-      drawer: sidebar(
-        selectedIndex: _selectedIndex,
-        onItemTapped: _onItemTapped,
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Stack(
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: clrAdmin2,
+    appBar: AppBar(
+      title: Text('Admin UTM FIT'),
+      
+    ),
+    drawer: sidebar(
+      selectedIndex: _selectedIndex,
+      onItemTapped: _onItemTapped,
+    ),
+    body: _isLoading
+        ? Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Stack(
               children: <Widget>[
                 Positioned(
                   child: Container(
@@ -81,138 +82,148 @@ class _DashboardAdminState extends State<DashboardAdmin> {
                     ),
                   ),
                 ),
-                SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Welcome Admin!',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Welcome Admin!',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 40),
-                      Padding(
-                        padding: const EdgeInsets.all(1),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            _buildStatisticCard(
-                              icon: Icons.people,
-                              total: totalUsers,
-                              label: 'Total Users',
-                              labelColor: Colors.blue,
+                    ),
+                    SizedBox(height: 40),
+                    Padding(
+  padding: const EdgeInsets.all(1),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: <Widget>[
+      Expanded(
+        child: _buildStatisticCard(
+          icon: Icons.people,
+          total: totalUsers,
+          label: 'Total Users',
+          labelColor: Colors.blue,
+        ),
+      ),
+      Expanded(
+        child: _buildStatisticCard(
+          icon: Icons.calendar_today,
+          total: totalBooking,
+          label: 'Total Booking',
+          labelColor: Colors.green,
+        ),
+      ),
+      Expanded(
+        child: _buildStatisticCard(
+          icon: Icons.sports_soccer,
+          total: 3,
+          label: 'Total Facilities',
+          labelColor: Colors.orange,
+        ),
+      ),
+    ],
+  ),
+),
+
+                    SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Facilities',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: clrAdminPrimary,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            _buildStatisticCard(
-                              icon: Icons.calendar_today,
-                              total: totalBooking,
-                              label: 'Total Booking',
-                              labelColor: Colors.green,
-                            ),
-                            _buildStatisticCard(
-                              icon: Icons.sports_soccer,
-                              total: 3,
-                              label: 'Total Facilities',
-                              labelColor: Colors.orange,
-                            ),
+                            SizedBox(height: 10),
+                            _buildFacilitiesTable(),
+                            SizedBox(height: 10),
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Facilities',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: clrAdminPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              _buildFacilitiesTable(),
-                              SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
-    );
-  }
-
-  Widget _buildStatisticCard({
-    required IconData icon,
-    required int total,
-    required String label,
-    required Color labelColor,
-  }) {
-    return Container(
-      width: 130,
-      height: 140,
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                backgroundColor: clrAdminPrimary,
-                child: Icon(
-                  icon,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                '$total',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 5),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: labelColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  label,
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              ),
-            ],
           ),
+  );
+}
+
+
+
+Widget _buildStatisticCard({
+  required IconData icon,
+  required int total,
+  required String label,
+  required Color labelColor,
+}) {
+  return Container(
+    width: 130,
+    child: Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              backgroundColor: clrAdminPrimary,
+              child: Icon(
+                icon,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              '$total',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: labelColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                label,
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
 
  Widget _buildFacilitiesTable() {
   return Padding(

@@ -61,7 +61,6 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
       backgroundColor: clrAdminBase, // Set the entire background screen color
       appBar: AppBar(
         backgroundColor: clrAdminPrimary,
-        automaticallyImplyLeading: false,
         elevation: 0,
         title: Row(
           children: [

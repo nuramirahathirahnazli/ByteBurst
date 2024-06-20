@@ -29,27 +29,34 @@ class _ViewListBookingState extends State<ViewListBooking> {
   }
 
   Future<List<Map<String, dynamic>>> fetchBookings() async {
-    List<Map<String, dynamic>> bookingsList = [];
-    try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('bookingform').get();
-      for (var doc in snapshot.docs) {
-        bookingsList.add(doc.data() as Map<String, dynamic>);
-      }
-    } catch (e) {
-      print("Error fetching bookings: $e");
+  List<Map<String, dynamic>> bookingsList = [];
+  try {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('bookingform')
+        .orderBy('createdAt', descending: true)
+        .get();
+    for (var doc in snapshot.docs) {
+      bookingsList.add(doc.data() as Map<String, dynamic>);
     }
-    return bookingsList;
+  } catch (e) {
+    print("Error fetching bookings: $e");
   }
+  return bookingsList;
+}
 
-  Future<int> fetchTotalBookings() async {
-    try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('bookingform').get();
-      return snapshot.docs.length;
-    } catch (e) {
-      print("Error fetching total bookings: $e");
-      return 0;
-    }
+Future<int> fetchTotalBookings() async {
+  try {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('bookingform')
+        .orderBy('createdAt', descending: true)
+        .get();
+    return snapshot.docs.length;
+  } catch (e) {
+    print("Error fetching total bookings: $e");
+    return 0;
   }
+}
+
 
   void _onItemTapped(int index) {
     setState(() {

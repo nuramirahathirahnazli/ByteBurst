@@ -7,20 +7,33 @@ import 'package:utmfit/screens/admin/Auth/signin_admin.dart';
 import 'package:utmfit/screens/user/Auth/signup_user.dart';
 import 'package:utmfit/screens/authentication/forgotpassword.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class loginScreen extends StatelessWidget {
-  // Firebase Authentication instance
-  static final FirebaseAuth _auth = FirebaseAuth.instance;
-  // Firestore instance
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
+class loginScreen extends StatefulWidget {
   const loginScreen({Key? key}) : super(key: key);
 
-  Future<void> _signInWithEmailAndPassword(
-      BuildContext context, String email, String password) async {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<loginScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  ValueNotifier<bool> obscureText = ValueNotifier<bool>(true);
+  bool rememberMe = false;
+
+  Future<void> _signInWithEmailAndPassword(BuildContext context, String email, String password) async {
     try {
       // Sign in user with email and password
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+      // Save email if "Remember Me" is checked
+      if (rememberMe) {
+        await _saveEmail(email);
+      }
 
       // Check if the signed-in user is not an admin
       DocumentSnapshot adminSnapshot = await _firestore.collection('Users').doc(email).get();
@@ -48,12 +61,13 @@ class loginScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _saveEmail(String email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController emailController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-    ValueNotifier<bool> obscureText = ValueNotifier<bool>(true);
-
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -149,7 +163,14 @@ class loginScreen extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  Checkbox(value: false, onChanged: (bool? value) {}),
+                                  Checkbox(
+                                    value: rememberMe,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        rememberMe = value ?? false;
+                                      });
+                                    },
+                                  ),
                                   Text('Remember me', style: TextStyle(color: Colors.black)),
                                 ],
                               ),

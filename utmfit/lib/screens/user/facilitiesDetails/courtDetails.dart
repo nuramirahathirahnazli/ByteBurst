@@ -13,7 +13,7 @@ class SquashPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Squash Court'),
         backgroundColor: clrUserPrimary,
-        automaticallyImplyLeading: false,
+       
       ),
       body: Container(
         color: Colors.yellow[50], // Light yellow background color

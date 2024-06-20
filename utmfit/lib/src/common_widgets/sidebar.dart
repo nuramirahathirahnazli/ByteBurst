@@ -90,15 +90,6 @@ Future<void> _signOut(BuildContext context) async {
             },
           ),
           ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Profile'),
-            selected: selectedIndex == 5,
-            onTap: () {
-              onItemTapped(5);
-              // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileUser()));
-            },
-          ),
-          ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Sign Out'),
             selected: false,

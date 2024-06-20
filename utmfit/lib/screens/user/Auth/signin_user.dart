@@ -1,8 +1,8 @@
-// ignore_for_file: unused_local_variable
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:utmfit/model/UserIdProvider.dart';
 import 'package:utmfit/screens/admin/Auth/signin_admin.dart';
 import 'package:utmfit/screens/user/Auth/signup_user.dart';
 import 'package:utmfit/screens/authentication/forgotpassword.dart';
@@ -26,39 +26,56 @@ class _LoginScreenState extends State<loginScreen> {
   bool rememberMe = false;
 
   Future<void> _signInWithEmailAndPassword(BuildContext context, String email, String password) async {
-    try {
-      // Sign in user with email and password
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+  try {
+    // Sign in user with email and password
+    UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
 
-      // Save email if "Remember Me" is checked
-      if (rememberMe) {
-        await _saveEmail(email);
-      }
+    // Save email if "Remember Me" is checked
+    if (rememberMe) {
+      await _saveEmail(email);
+    }
 
-      // Check if the signed-in user is not an admin
-      DocumentSnapshot adminSnapshot = await _firestore.collection('Users').doc(email).get();
-      if (adminSnapshot.exists) {
-        // Navigate to admin dashboard
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => dashboardUser()), 
-        );
-      } else {
-        // Show error message for non-admin users
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("This is for non-admins sign-in only.")),
-        );
-      }
-    } catch (e) {
-      // Handle login errors
-      print("Error signing in: $e");
-      // Show error dialog or toast message to the user
+    // Get the user ID of the signed-in user
+    String userId = userCredential.user!.uid; // This gets the user's ID
+
+    // Set the user ID in SharedPreferences
+    await _saveUserId(userId);
+
+    // Set the user ID in your UserIdProvider
+    UserIdProvider userIdProvider = Provider.of<UserIdProvider>(context, listen: false);
+    userIdProvider.setUserEmail(userId); // Set the userId after successful login
+
+    // Check if the signed-in user is not an admin
+    DocumentSnapshot adminSnapshot = await _firestore.collection('Users').doc(email).get();
+    if (adminSnapshot.exists) {
+      // Navigate to admin dashboard
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => dashboardUser()),
+      );
+    } else {
+      // Show error message for non-admin users
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Failed to sign in. Please check your credentials."),
-        ),
+        SnackBar(content: Text("This is for non-admins sign-in only.")),
       );
     }
+  } catch (e) {
+    // Handle login errors
+    print("Error signing in: $e");
+    // Show error dialog or toast message to the user
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Failed to sign in. Please check your credentials."),
+      ),
+    );
+  }
+}
+
+
+  Future<void> _saveUserId(String userId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', userId);
+    print('UserId saved: $userId');
   }
 
   Future<void> _saveEmail(String email) async {

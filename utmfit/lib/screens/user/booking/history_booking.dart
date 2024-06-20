@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:utmfit/model/UserIdProvider.dart';
 import 'package:utmfit/screens/user/booking/view_history_details.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
@@ -14,7 +16,6 @@ class MyHistoryBooking extends StatefulWidget {
 }
 
 class _MyHistoryBookingState extends State<MyHistoryBooking> {
-  final currentUser = FirebaseAuth.instance.currentUser!;
   final List<Tab> tabs = [
     Tab(text: 'Active'),
     Tab(text: 'Past'),
@@ -22,7 +23,41 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final email = currentUser.email;
+      if (email != null) {
+        Provider.of<UserIdProvider>(context, listen: false).setUserEmail(email);
+      } else {
+        print('Current user email is null');
+      }
+    } else {
+      print('No current user found');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final userIdProvider = Provider.of<UserIdProvider>(context);
+    final userEmail = userIdProvider.userEmail;
+    
+    if (userEmail == null) {
+      print('User email is null');
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('My Bookings'),
+          backgroundColor: clrUserPrimary,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    print('User email: $userEmail');
+
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
@@ -33,35 +68,46 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
           automaticallyImplyLeading: false,
         ),
         body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection("bookingform").snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection("bookingform")
+              .where("userId", isEqualTo: userEmail) // Use the userEmail here
+              .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final bookingData = snapshot.data!.docs;
-
-              return Column(
-                children: [
-                  TabBar(
-                    tabs: tabs,
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        _buildBookingList(bookingData, 'Confirmed'),
-                        _buildBookingList(bookingData, 'Completed'),
-                        _buildBookingList(bookingData, 'Cancelled'),
-                      ],
+              if (bookingData.isEmpty) {
+                print('No data available');
+                return Center(
+                  child: Text('No booking history available'),
+                );
+              } else {
+                return Column(
+                  children: [
+                    TabBar(
+                      tabs: tabs,
                     ),
-                  ),
-                ],
-              );
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          _buildBookingList(bookingData, 'Confirmed'),
+                          _buildBookingList(bookingData, 'Completed'),
+                          _buildBookingList(bookingData, 'Cancelled'),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              }
             } else if (snapshot.hasError) {
+              print('Error fetching data: ${snapshot.error}');
               return Center(
                 child: Text('Error ${snapshot.error}'),
               );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
           },
         ),
         bottomNavigationBar: CustomBottomNavigationBar(selectedIndex: 3, onItemTapped: (_) {}),
@@ -94,7 +140,7 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
     required String game,
     required String status,
     required IconData icon,
-    required String bookingId, 
+    required String bookingId,
   }) {
     Color statusColor = clrStatusConfirmed;
     if (status == 'Completed') {
@@ -119,7 +165,6 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
             Row(
               children: [
                 Icon(icon),

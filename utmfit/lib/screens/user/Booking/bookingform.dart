@@ -1,5 +1,3 @@
-// ignore_for_file: unused_field
-
 import 'package:flutter/material.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:utmfit/src/constants/colors.dart';
@@ -36,7 +34,7 @@ class BookingService {
       DocumentReference bookingRef = _bookingsCollection.doc(bookingId);
       await bookingRef.set({
         'bookingId': bookingId,
-        'userId': userId, // Store the user's display name or email
+        'userId': userId, // Store the user's uid
         'game': game,
         'players': players,
         'date': date,
@@ -103,6 +101,7 @@ class BookingService {
   }
 }
 
+
 class BookingFormPage extends StatefulWidget {
   const BookingFormPage({Key? key}) : super(key: key);
 
@@ -111,7 +110,6 @@ class BookingFormPage extends StatefulWidget {
 }
 
 class _BookingFormPageState extends State<BookingFormPage> {
-  int _page = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +179,7 @@ class BookingFormPage2 extends StatefulWidget {
 }
 
 class _BookingFormPage2State extends State<BookingFormPage2> {
-  int _page = 0;
+
   String _selectedGame = 'Squash';
   int _selectedPlayers = 1;
   DateTime _selectedDate = DateTime.now();
@@ -394,7 +392,7 @@ class BookingFormPage3 extends StatefulWidget {
 }
 
 class _BookingFormPage3State extends State<BookingFormPage3> {
-  int _page = 0;
+  
   bool _acknowledged = false;
   bool _agreedToPay = false;
 

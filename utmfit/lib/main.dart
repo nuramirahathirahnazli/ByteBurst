@@ -1,12 +1,11 @@
-// ignore_for_file: unused_import
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:utmfit/screens/admin/Auth/signin_admin.dart';
+import 'package:provider/provider.dart'; 
+import 'package:utmfit/model/UserIdProvider.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
-import 'package:utmfit/screens/admin/dashboard_admin.dart';
 import 'firebase_options.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,47 +16,21 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    runApp(const MyApp());
+    runApp(MyApp());
   } catch (e) {
     print('Error initializing Firebase: $e');
   }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-        debugShowCheckedModeBanner: false, home: loginScreen());
+    return ChangeNotifierProvider(
+      create: (_) => UserIdProvider(), // Create an instance of your ChangeNotifier class
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: loginScreen(),
+      ),
+    );
   }
 }
-
-
-
-
-
-
-
-
-
-
-//-------------------------------------------------------
-//kIV UNTUK WELCOME SCREEN
-// import 'package:flutter/material.dart';
-// import 'package:utmfit/screens/user/welcome_screen.dart';
-
-// void main() => runApp(MyApp());
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       theme: ThemeData(
-//         scaffoldBackgroundColor: Colors.white,
-//       ),
-//       home: WelcomeScreen(),
-//     );
-//   }
-// }

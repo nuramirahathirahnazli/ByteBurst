@@ -121,6 +121,16 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
       itemBuilder: (context, index) {
         var booking = bookingData[index].data() as Map<String, dynamic>;
 
+        // Convert the date string to a DateTime object
+        DateTime bookingDate = DateTime.parse(booking['date']);
+        DateTime now = DateTime.now();
+
+        // Update the status to "Completed" if the booking date is in the past
+        if (status == 'Confirmed' && bookingDate.isBefore(now)) {
+          FirebaseFirestore.instance.collection('bookingform').doc(bookingData[index].id).update({'status': 'Completed'});
+          booking['status'] = 'Completed';
+        }
+
         if (booking['status'] == status) {
           return _buildBookingItem(
             date: booking['date'],
@@ -157,7 +167,6 @@ class _MyHistoryBookingState extends State<MyHistoryBooking> {
     String dayOfWeek = DateFormat.E().format(dateTime);
 
     return Card(
-      //color: clrUser3,//background color
       margin: EdgeInsets.all(8.0),
       elevation: 4.0,
       child: Padding(

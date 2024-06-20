@@ -24,7 +24,7 @@ class ViewHistoryDetails extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: clrUserPrimary,
         title: Text('Booking Details'),
-        automaticallyImplyLeading: false,
+        //automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance.collection("bookingform").doc(bookingID).get(),
@@ -78,7 +78,7 @@ class ViewHistoryDetails extends StatelessWidget {
                           _buildDetailItem('Number of Players', booking['players']),
                           _buildDetailItem('Court Number', booking['court']),
                           Divider(),
-                          _buildDetailItem('Total Payment', 'RM XX'), // Replace XX with the actual amount
+                          _buildDetailItem('Total Payment', 'RM 5.00'), // Replace XX with the actual amount
                         ],
                       ),
                     ),

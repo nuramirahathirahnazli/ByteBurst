@@ -33,7 +33,10 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
   Future<List<Map<String, dynamic>>> fetchAnnouncements() async {
     List<Map<String, dynamic>> announcementsList = [];
     try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('announcements').get();
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('announcements')
+          .orderBy('createdAt', descending: true)
+          .get();
       for (var doc in snapshot.docs) {
         announcementsList.add(doc.data() as Map<String, dynamic>);
       }

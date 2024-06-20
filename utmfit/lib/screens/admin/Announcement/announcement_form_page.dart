@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:utmfit/src/constants/colors.dart'; 
+import 'package:utmfit/src/constants/colors.dart';
 
 class AnnouncementFormPage extends StatefulWidget {
   final String? announcementId;
@@ -21,13 +21,23 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
 
   final CollectionReference announcementsCollection = FirebaseFirestore.instance.collection('announcements');
 
+  Timestamp? _createdAt;
+
   @override
   void initState() {
     super.initState();
     if (widget.announcementId != null) {
       _titleController.text = widget.initialTitle!;
       _descriptionController.text = widget.initialDescription!;
+      _fetchCreatedAt();
     }
+  }
+
+  Future<void> _fetchCreatedAt() async {
+    DocumentSnapshot doc = await announcementsCollection.doc(widget.announcementId).get();
+    setState(() {
+      _createdAt = doc['createdAt'];
+    });
   }
 
   Future<void> _saveAnnouncement() async {
@@ -43,12 +53,14 @@ class _AnnouncementFormPageState extends State<AnnouncementFormPage> {
           'announcementId': newId,
           'title': _titleController.text,
           'description': _descriptionController.text,
+          'createdAt': Timestamp.now(), // Add createdAt field
         });
       } else {
-        // Update existing announcement
+        // Update existing announcement with createdAt field
         await announcementsCollection.doc(widget.announcementId).update({
           'title': _titleController.text,
           'description': _descriptionController.text,
+          'createdAt': _createdAt ?? Timestamp.now(), // Maintain original createdAt
         });
       }
 

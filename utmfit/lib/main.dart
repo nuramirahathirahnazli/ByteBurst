@@ -2,14 +2,10 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:utmfit/screens/admin/Auth/signin_admin.dart';
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
-import 'package:utmfit/screens/user/dashboard_user.dart';
 import 'package:utmfit/screens/admin/dashboard_admin.dart';
-import 'package:utmfit/screens/user/profile/edit_profile.dart';
-import 'package:utmfit/screens/user/profile/profile_user.dart';
-import 'package:utmfit/screens/user/booking/history_booking.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -33,7 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        debugShowCheckedModeBanner: false, home: loginScreen());
+        debugShowCheckedModeBanner: false, home: DashboardAdmin());
   }
 }
 

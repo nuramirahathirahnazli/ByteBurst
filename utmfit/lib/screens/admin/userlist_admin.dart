@@ -144,7 +144,7 @@ class _UsersDisplayState extends State<UsersDisplay> {
                             Map<String, dynamic> user = entry.value;
                             return DataRow(cells: [
                               DataCell(Text((index + 1).toString())),
-                              DataCell(Text(user['name'] ?? 'N/A')),
+                              DataCell(Text(user['username'] ?? 'N/A')),
                               DataCell(Text(user['email'] ?? 'N/A')),
                             ]);
                           }).toList(),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:utmfit/screens/user/booking/bookingform.dart';
 import 'package:utmfit/src/common_widgets/bottom_navigation_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:utmfit/src/constants/colors.dart';
 
 class SquashPage extends StatelessWidget {
   @override
@@ -11,13 +12,7 @@ class SquashPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Squash Court'),
-        backgroundColor: Colors.orange, // Set the color to match the design
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        backgroundColor: clrUserPrimary,
       ),
       body: Container(
         color: Colors.yellow[50], // Light yellow background color
@@ -145,12 +140,12 @@ class SquashPage extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red, // Background color
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      backgroundColor: const Color.fromARGB(126, 76, 175, 79), // Background color
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                       textStyle: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white, // Text color
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -181,12 +176,6 @@ class PingPongPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Ping Pong Court'),
         backgroundColor: Colors.orange, // Set the color to match the design
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
       ),
       body: Container(
         color: Colors.yellow[50], // Light yellow background color
@@ -320,12 +309,12 @@ class PingPongPage extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red, // Background color
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      backgroundColor: const Color.fromARGB(126, 76, 175, 79), // Background color
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                       textStyle: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white, // Text color
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -385,12 +374,6 @@ class _BadmintonPageState extends State<BadmintonPage> {
       appBar: AppBar(
         title: Text('Badminton Court'),
         backgroundColor: Colors.orange, // Set the color to match the design
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
       ),
       body: Container(
         color: Colors.yellow[50], // Light yellow background color
@@ -521,17 +504,16 @@ class _BadmintonPageState extends State<BadmintonPage> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BookingFormPage(),
-                        ),
+                            builder: (context) => BookingFormPage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red, // Background color
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      backgroundColor: const Color.fromARGB(126, 76, 175, 79), // Background color
+                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                       textStyle: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white, // Text color
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

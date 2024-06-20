@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:utmfit/screens/user/booking/bookingform.dart';
 import 'package:utmfit/screens/user/booking/history_booking.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart';
+import 'package:utmfit/screens/user/facilitiesDetails/facilitiesList.dart';
 import 'package:utmfit/screens/user/profile/profile_user.dart';
 import 'package:utmfit/src/constants/colors.dart';
 
@@ -24,7 +25,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => dashboardUser()));
             break;
           case 1:
-            //Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BookingFormPage()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => FacilitiesPage()));
             break;
           case 2:
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BookingFormPage()));
@@ -48,7 +49,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.sports_tennis_outlined),
-          label: 'Sports',
+          label: 'Facilities',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.add),

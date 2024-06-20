@@ -7,7 +7,6 @@ import 'package:utmfit/screens/admin/Auth/signin_admin.dart';
 import 'package:utmfit/screens/user/Auth/signup_user.dart';
 import 'package:utmfit/screens/authentication/forgotpassword.dart';
 import 'package:utmfit/screens/user/dashboard_user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class loginScreen extends StatefulWidget {
   const loginScreen({Key? key}) : super(key: key);
@@ -30,16 +29,8 @@ class _LoginScreenState extends State<loginScreen> {
     // Sign in user with email and password
     UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
 
-    // Save email if "Remember Me" is checked
-    if (rememberMe) {
-      await _saveEmail(email);
-    }
-
     // Get the user ID of the signed-in user
     String userId = userCredential.user!.uid; // This gets the user's ID
-
-    // Set the user ID in SharedPreferences
-    await _saveUserId(userId);
 
     // Set the user ID in your UserIdProvider
     UserIdProvider userIdProvider = Provider.of<UserIdProvider>(context, listen: false);
@@ -70,18 +61,6 @@ class _LoginScreenState extends State<loginScreen> {
     );
   }
 }
-
-
-  Future<void> _saveUserId(String userId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userId', userId);
-    print('UserId saved: $userId');
-  }
-
-  Future<void> _saveEmail(String email) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('email', email);
-  }
 
   @override
   Widget build(BuildContext context) {

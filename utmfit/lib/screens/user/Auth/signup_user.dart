@@ -116,7 +116,8 @@ class signupScreen extends StatelessWidget {
                           Center(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.black, backgroundColor: Color(0xFFFFC107),
+                                foregroundColor: Colors.white, 
+                                backgroundColor: Colors.orange, // Darker orange color for better contrast
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                                 padding: EdgeInsets.symmetric(horizontal: 100, vertical: 20),
                               ),

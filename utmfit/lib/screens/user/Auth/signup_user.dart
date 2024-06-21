@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:utmfit/screens/user/dashboard_user.dart';
+import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/constants/colors.dart';
 
 class signupScreen extends StatelessWidget {
@@ -32,7 +32,7 @@ class signupScreen extends StatelessWidget {
 
       // Navigate to the next screen after successful signup
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => dashboardUser()));
+          context, MaterialPageRoute(builder: (context) => loginScreen()));
     } on FirebaseAuthException catch (e) {
       // Handle signup errors here
       print('Signup error: ${e.message}');

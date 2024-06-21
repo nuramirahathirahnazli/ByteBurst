@@ -1,11 +1,25 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore library
 import 'package:utmfit/screens/user/Auth/signin_user.dart';
 import 'package:utmfit/src/common_widgets/sidebar.dart';
 import 'package:utmfit/src/constants/colors.dart';
 import 'package:utmfit/src/common_widgets/admin_bottom_navigation.dart'; // Import the new widget
+
+// Model class for Facility
+class Facility {
+  final String number;
+  final String name;
+  final String location;
+  int totalBookings;
+
+  Facility({
+    required this.number,
+    required this.name,
+    required this.location,
+    this.totalBookings = 0, // Default to 0 bookings
+  });
+}
 
 class FacilitiesAdmin extends StatefulWidget {
   const FacilitiesAdmin({Key? key}) : super(key: key);
@@ -16,24 +30,7 @@ class FacilitiesAdmin extends StatefulWidget {
 
 class _FacilitiesAdminState extends State<FacilitiesAdmin> {
   int _selectedIndex = 3;
-
-  final List<Map<String, String?>> facilities = [
-    {
-      'number': '1',
-      'name': 'Squash',
-      'location': 'Building A, Floor 2',
-    },
-    {
-      'number': '2',
-      'name': 'Badminton',
-      'location': 'Sports Complex, Hall B',
-    },
-    {
-      'number': '3',
-      'name': 'Ping Pong',
-      'location': 'Community Center, Room C',
-    },
-  ];
+  List<Facility> facilities = []; // List to hold fetched facilities
 
   void _onItemTapped(int index) {
     setState(() {
@@ -52,6 +49,56 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
       );
     } catch (e) {
       print('Error signing out: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFacilities(); // Fetch facilities data when the widget initializes
+  }
+
+  void fetchFacilities() async {
+    try {
+      // Fetch facilities data from Firestore
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('facilities').get();
+      
+      // Map the query snapshot to List<Facility>
+      List<Facility> fetchedFacilities = querySnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        return Facility(
+          number: data['facilitiesID'] ?? '',
+          name: data['facilitiesName'] ?? '',
+          location: data['location'] ?? '',
+          totalBookings: 0, // Initialize totalBookings to 0
+        );
+      }).toList();
+
+      // Fetch bookings count for each facility
+      for (Facility facility in fetchedFacilities) {
+        int totalBookings = await getTotalBookingsForFacility(facility.name); // Fetch total bookings for facility's game
+        facility.totalBookings = totalBookings;
+      }
+
+      setState(() {
+        facilities = fetchedFacilities;
+      });
+    } catch (e) {
+      print('Error fetching facilities: $e');
+    }
+  }
+
+  // Function to get total bookings for a specific facility's game from Firestore
+  Future<int> getTotalBookingsForFacility(String game) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('bookingform')
+          .where('game', isEqualTo: game)
+          .get();
+
+      return querySnapshot.size; // Return the number of documents (total bookings)
+    } catch (e) {
+      print('Error fetching bookingform: $e');
+      return 0; // Return 0 in case of error
     }
   }
 
@@ -122,16 +169,18 @@ class _FacilitiesAdminState extends State<FacilitiesAdmin> {
                   DataColumn(label: Text('No.')),
                   DataColumn(label: Text('Name ')),
                   DataColumn(label: Text('Location')),
+                  DataColumn(label: Text('Total Bookings')), // New column for total bookings
                 ],
                 dataRowHeight: 60,
                 rows: facilities.asMap().entries.map((entry) {
                   int index = entry.key;
-                  Map<String, String?> facility = entry.value;
-                  print("Facility: ${facility['name']}, Location: ${facility['location']}"); // Debugging print statement
+                  Facility facility = entry.value;
+                  print("Facility: ${facility.name}, Location: ${facility.location}, Total Bookings: ${facility.totalBookings}"); // Debugging print statement
                   return DataRow(cells: [
                     DataCell(Text((index + 1).toString())),
-                    DataCell(Text(facility['name'] ?? 'N/A')),
-                    DataCell(Text(facility['location'] ?? 'N/A')),
+                    DataCell(Text(facility.name)),
+                    DataCell(Text(facility.location)),
+                    DataCell(Text('${facility.totalBookings}')),
                   ]);
                 }).toList(),
               ),
